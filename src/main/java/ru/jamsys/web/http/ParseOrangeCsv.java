@@ -13,12 +13,13 @@ import ru.jamsys.SpbMetroCheckApplication;
 import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.exception.ForwardException;
 import ru.jamsys.core.extension.http.HttpAsyncResponse;
+import ru.jamsys.core.flat.util.Util;
 import ru.jamsys.core.flat.util.UtilJson;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
 import ru.jamsys.core.resource.jdbc.JdbcResource;
-import ru.jamsys.jt.Data;
+import ru.jamsys.jt.Orange;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -27,6 +28,41 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+
+/*
+{
+  "f0" : "Идентификатор",
+  "f1" : "№",
+  "f2" : "Смена",
+  "f3" : "Признак расчета",
+  "f4" : "ФД",
+  "f5" : "ФП",
+  "f6" : "СНО",
+  "f7" : "Контакт клиента",
+  "f8" : "Список предметов расчета",
+  "f9" : "Оплата",
+  "f10" : "Сумма",
+  "f11" : "Дата",
+  "f12" : "Идентификатор в пакете",
+  "f13" : "Статус",
+  "f14" : "Номер ККТ",
+  "f15" : "Группа кассы",
+  "f16" : "Наименование доп. реквизита пользователя",
+  "f17" : "Значение доп. реквизита пользователя",
+  "f18" : "Доп реквизит чека(БСО)",
+  "f19" : "Покупатель (клиент)",
+  "f20" : "ИНН покупателя (клиента)",
+  "f21" : "Номер ТС",
+  "f22" : "Адрес расчетов",
+  "f23" : "Место расчетов",
+  "f24" : "Тип операции",
+  "f25" : "Тип чека",
+  "f26" : "Способ оплаты",
+  "f27" : "ИНН поставщика",
+  "f28" : "Признак агента позиций",
+  "f29" : "Версия ФФД"
+}
+* */
 
 @Component
 @RequestMapping("/parseOrangeCsv")
@@ -54,21 +90,32 @@ public class ParseOrangeCsv implements PromiseGenerator {
                             json.put("f9", SpbMetroCheckApplication.arrayReplace((String) json.get("f9")));
                             json.put("f26", SpbMetroCheckApplication.arrayReplace((String) json.get("f26")));
 
-                            JdbcRequest jdbcRequest = new JdbcRequest(Data.INSERT);
+
+                            String dateLocalString = (String) json.get("f11");
+                            Long dateLocalMs;
+                            try {
+                                dateLocalMs = Util.getTimestamp(dateLocalString, "d.M.y H:m") * 1000;
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+
+
+                            JdbcRequest jdbcRequest = new JdbcRequest(Orange.INSERT);
                             jdbcRequest
-                                    .addArg("date_data", System.currentTimeMillis())
-                                    .addArg("type_data", "orange")
-                                    .addArg("key_data", json.get("f0"))
-                                    .addArg("data_data", UtilJson.toStringPretty(json, "{}"));
+                                    .addArg("date_local", dateLocalMs)
+                                    .addArg("id_transaction", json.get("f0"))
+                                    .addArg("data", UtilJson.toStringPretty(json, "{}"));
 
                             try {
                                 jdbcResource.execute(jdbcRequest);
                             } catch (Throwable th) {
+                                th.printStackTrace();
                                 throw new ForwardException(th);
                             }
                         });
                         input.setBody("ParseOrangeCsv complete");
                     } catch (Throwable th) {
+                        th.printStackTrace();
                         throw new ForwardException(th);
                     }
                 });
@@ -87,7 +134,8 @@ public class ParseOrangeCsv implements PromiseGenerator {
 
     private void onRead(AtomicBoolean isThreadRun, Consumer<Map<String, Object>> onRead) throws CsvValidationException, IOException {
         String[] nextLine;
-        while ((nextLine = getCSVReader().readNext()) != null && isThreadRun.get()) {
+        CSVReader csvReader = getCSVReader();
+        while ((nextLine = csvReader.readNext()) != null && isThreadRun.get()) {
             Map<String, Object> json = new LinkedHashMap<>();
             for (int i = 0; i < nextLine.length; i++) {
                 json.put("f" + i, nextLine[i]);

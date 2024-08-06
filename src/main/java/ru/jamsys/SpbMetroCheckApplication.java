@@ -27,7 +27,7 @@ public class SpbMetroCheckApplication {
 
     public static List<String> arrayReplace(String str) {
         List<String> result = new ArrayList<>();
-        if (str != null && !str.isEmpty() && str.startsWith("[") && str.endsWith("]")) {
+        if (str != null && str.startsWith("[") && str.endsWith("]")) {
             String[] split = str.substring(1, str.length() - 1).split(",");
             for (String item : split) {
                 result.add(item.trim());
