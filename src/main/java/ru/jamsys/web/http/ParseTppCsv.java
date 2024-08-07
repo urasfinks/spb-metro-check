@@ -18,6 +18,7 @@ import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
 import ru.jamsys.core.resource.jdbc.JdbcResource;
+import ru.jamsys.core.web.http.HttpHandler;
 import ru.jamsys.jt.TPP;
 
 import java.io.FileReader;
@@ -104,7 +105,7 @@ import java.util.function.Consumer;
 
 @Component
 @RequestMapping("/parseTppCsv")
-public class ParseTppCsv implements PromiseGenerator {
+public class ParseTppCsv implements PromiseGenerator, HttpHandler {
 
     @Getter
     @Setter

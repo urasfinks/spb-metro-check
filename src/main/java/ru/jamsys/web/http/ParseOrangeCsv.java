@@ -19,6 +19,7 @@ import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
 import ru.jamsys.core.resource.jdbc.JdbcResource;
+import ru.jamsys.core.web.http.HttpHandler;
 import ru.jamsys.jt.Orange;
 
 import java.io.FileReader;
@@ -66,7 +67,7 @@ import java.util.function.Consumer;
 
 @Component
 @RequestMapping("/parseOrangeCsv")
-public class ParseOrangeCsv implements PromiseGenerator {
+public class ParseOrangeCsv implements PromiseGenerator, HttpHandler {
 
     @Getter
     @Setter

@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS "spb-metro-check".tpp
     status character varying(255) COLLATE pg_catalog."default",
     id_transaction character varying(255) COLLATE pg_catalog."default",
     processed character varying(255),
+    date_processed timestamp without time zone,
     data json NOT NULL,
     PRIMARY KEY (id)
 );
@@ -30,6 +31,8 @@ CREATE TABLE IF NOT EXISTS "spb-metro-check".orange
     date_add timestamp without time zone NOT NULL DEFAULT (now())::timestamp without time zone,
     date_local timestamp without time zone,
     id_transaction character varying(255) COLLATE pg_catalog."default",
+    processed character varying(255),
+    date_processed timestamp without time zone,
     data json NOT NULL,
     PRIMARY KEY (id)
 );
