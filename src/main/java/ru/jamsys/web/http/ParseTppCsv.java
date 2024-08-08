@@ -24,7 +24,9 @@ import ru.jamsys.jt.TPP;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -120,40 +122,52 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 700_000L)
-                .appendWithResource("loadToDb", JdbcResource.class, "logger", (isThreadRun, promise, jdbcResource) -> {
-                    HttpAsyncResponse input = promise.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
+                .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, promise, jdbcResource) -> {
                     try {
-                        JdbcRequest jdbcRequest = new JdbcRequest(TPP.INSERT);
-                        onRead(isThreadRun, json -> {
-                            try {
-                                String dateLocalString = json.get("f0") + " " + json.get("f1");
-                                Long dateLocalMs = Util.getTimestamp(dateLocalString, "d.M.y H:m:s") * 1000;
+                        onRead(isThreadRun, 5000, listJson -> {
+                            JdbcRequest jdbcRequest = new JdbcRequest(TPP.INSERT);
+                            listJson.forEach(json -> {
+                                try {
+                                    String dateLocalString = json.get("f0") + " " + json.get("f1");
+                                    Long dateLocalMs = Util.getTimestamp(dateLocalString, "d.M.y H:m:s") * 1000;
 
-                                Long dateFnMs = null;
-                                String dateFnString = json.get("f55") + " " + json.get("f56");
-                                if (!dateFnString.trim().isEmpty()) {
-                                    dateFnMs = Util.getTimestamp(dateFnString, "d.M.y H:m:s") * 1000;
+                                    Long dateFnMs = null;
+                                    String dateFnString = json.get("f55") + " " + json.get("f56");
+                                    if (!dateFnString.trim().isEmpty()) {
+                                        dateFnMs = Util.getTimestamp(dateFnString, "d.M.y H:m:s") * 1000;
+                                    }
+                                    //System.out.println(UtilJson.toStringPretty(json, "{}"));
+                                    jdbcRequest
+                                            .addArg("date_local", dateLocalMs)
+                                            .addArg("date_fn", dateFnMs)
+                                            .addArg("status", json.get("f29"))
+                                            .addArg("id_transaction", json.get("f48"))
+                                            .addArg("data", "{}")
+                                            //.addArg("data", UtilJson.toStringPretty(json, "{}"))
+                                            .nextBatch();
+
+                                } catch (Throwable th) {
+                                    th.printStackTrace();
+                                    throw new ForwardException(th);
                                 }
-
-                                jdbcRequest
-                                        .addArg("date_local", dateLocalMs)
-                                        .addArg("date_fn", dateFnMs)
-                                        .addArg("status", json.get("f29"))
-                                        .addArg("id_transaction", json.get("f48"))
-                                        .addArg("data", UtilJson.toStringPretty(json, "{}"))
-                                        .nextBatch();
-
+                            });
+                            try {
+                                Util.logConsole("insert");
+                                jdbcResource.execute(jdbcRequest);
                             } catch (Throwable th) {
                                 th.printStackTrace();
+                                System.out.println(jdbcRequest.getListArgs());
                                 throw new ForwardException(th);
                             }
                         });
-                        jdbcResource.execute(jdbcRequest);
-                        input.setBody("ParseTppCsv complete");
                     } catch (Throwable th) {
                         th.printStackTrace();
                         throw new ForwardException(th);
                     }
+                })
+                .then("end", (_, promise) -> {
+                    HttpAsyncResponse input = promise.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
+                    input.setBody("ParseTppCsv complete");
                 });
     }
 
@@ -162,21 +176,33 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                 .withSeparator(';')
                 .withIgnoreQuotations(true)
                 .build();
-        return new CSVReaderBuilder(new FileReader("web/rrr/tpp.csv", Charset.forName("Cp1251")))
+        return new CSVReaderBuilder(new FileReader("web/1/tpp.csv", Charset.forName("UTF-8")))
                 .withSkipLines(1)
                 .withCSVParser(parser)
                 .build();
     }
 
-    private void onRead(AtomicBoolean isThreadRun, Consumer<Map<String, Object>> onRead) throws CsvValidationException, IOException {
+    private void onRead(AtomicBoolean isThreadRun, int countBatch, Consumer<List<Map<String, Object>>> onRead) throws CsvValidationException, IOException {
         String[] nextLine;
         CSVReader csvReader = getCSVReader();
+        int curBatchSize = 0;
+        List<Map<String, Object>> batch = new ArrayList<>();
         while ((nextLine = csvReader.readNext()) != null && isThreadRun.get()) {
             Map<String, Object> json = new LinkedHashMap<>();
             for (int i = 0; i < nextLine.length; i++) {
                 json.put("f" + i, nextLine[i]);
             }
-            onRead.accept(json);
+            batch.add(json);
+            curBatchSize++;
+            if (curBatchSize > countBatch) {
+                onRead.accept(batch);
+                batch = new ArrayList<>();
+                curBatchSize = 0;
+            }
+            //break;
+        }
+        if (!batch.isEmpty()) {
+            onRead.accept(batch);
         }
     }
 

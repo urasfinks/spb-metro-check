@@ -52,12 +52,12 @@ public class ProcessTppTransaction implements PromiseGenerator, HttpHandler {
                     }
                 })
                 .appendWithResource("tppNotOrange", JdbcResource.class, "logger", (_, _, jdbcResource) -> {
-                    JdbcRequest jdbcRequest = new JdbcRequest(TPP.NOT_ORANGE);
-                    try {
-                        jdbcResource.execute(jdbcRequest);
-                    } catch (Throwable th) {
-                        throw new ForwardException(th);
-                    }
+//                    JdbcRequest jdbcRequest = new JdbcRequest(TPP.NOT_ORANGE);
+//                    try {
+//                        jdbcResource.execute(jdbcRequest);
+//                    } catch (Throwable th) {
+//                        throw new ForwardException(th);
+//                    }
                 })
                 .appendWithResource("tppFnFuture", JdbcResource.class, "logger", (_, _, jdbcResource) -> {
                     JdbcRequest jdbcRequest = new JdbcRequest(TPP.FN_FUTURE);
@@ -76,20 +76,20 @@ public class ProcessTppTransaction implements PromiseGenerator, HttpHandler {
                     }
                 })
                 .appendWithResource("orangeNotTpp", JdbcResource.class, "logger", (_, _, jdbcResource) -> {
-                    JdbcRequest jdbcRequest = new JdbcRequest(Orange.NOT_TPP);
-                    try {
-                        jdbcResource.execute(jdbcRequest);
-                    } catch (Throwable th) {
-                        throw new ForwardException(th);
-                    }
+//                    JdbcRequest jdbcRequest = new JdbcRequest(Orange.NOT_TPP);
+//                    try {
+//                        jdbcResource.execute(jdbcRequest);
+//                    } catch (Throwable th) {
+//                        throw new ForwardException(th);
+//                    }
                 })
                 .appendWithResource("orangeFillContinue", JdbcResource.class, "logger", (_, _, jdbcResource) -> {
-                    JdbcRequest jdbcRequest = new JdbcRequest(Orange.FILL_CONTINUE);
-                    try {
-                        jdbcResource.execute(jdbcRequest);
-                    } catch (Throwable th) {
-                        throw new ForwardException(th);
-                    }
+//                    JdbcRequest jdbcRequest = new JdbcRequest(Orange.FILL_CONTINUE);
+//                    try {
+//                        jdbcResource.execute(jdbcRequest);
+//                    } catch (Throwable th) {
+//                        throw new ForwardException(th);
+//                    }
                 })
                 //.append(promiseTask)
                 ;
