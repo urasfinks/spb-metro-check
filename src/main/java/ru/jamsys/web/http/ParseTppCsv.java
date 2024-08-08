@@ -119,6 +119,31 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
         this.servicePromise = servicePromise;
     }
 
+    private void addToRequest(Map<String, Object> json, JdbcRequest jdbcRequest) {
+        try {
+            String dateLocalString = json.get("f0") + " " + json.get("f1");
+            Long dateLocalMs = Util.getTimestamp(dateLocalString, "d.M.y H:m:s") * 1000;
+
+            Long dateFnMs = null;
+            String dateFnString = json.get("f55") + " " + json.get("f56");
+            if (!dateFnString.trim().isEmpty()) {
+                dateFnMs = Util.getTimestamp(dateFnString, "d.M.y H:m:s") * 1000;
+            }
+            //System.out.println(UtilJson.toStringPretty(json, "{}"));
+            jdbcRequest
+                    .addArg("date_local", dateLocalMs)
+                    .addArg("date_fn", dateFnMs)
+                    .addArg("status", json.get("f29"))
+                    .addArg("id_transaction", json.get("f48"))
+                    .addArg("data", UtilJson.toStringPretty(json, "{}"))
+                    .nextBatch();
+
+        } catch (Throwable th) {
+            th.printStackTrace();
+            throw new ForwardException(th);
+        }
+    }
+
     @Override
     public Promise generate() {
         return servicePromise.get(index, 700_000L)
@@ -126,31 +151,7 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                     try {
                         onRead(isThreadRun, 5000, listJson -> {
                             JdbcRequest jdbcRequest = new JdbcRequest(TPP.INSERT);
-                            listJson.forEach(json -> {
-                                try {
-                                    String dateLocalString = json.get("f0") + " " + json.get("f1");
-                                    Long dateLocalMs = Util.getTimestamp(dateLocalString, "d.M.y H:m:s") * 1000;
-
-                                    Long dateFnMs = null;
-                                    String dateFnString = json.get("f55") + " " + json.get("f56");
-                                    if (!dateFnString.trim().isEmpty()) {
-                                        dateFnMs = Util.getTimestamp(dateFnString, "d.M.y H:m:s") * 1000;
-                                    }
-                                    //System.out.println(UtilJson.toStringPretty(json, "{}"));
-                                    jdbcRequest
-                                            .addArg("date_local", dateLocalMs)
-                                            .addArg("date_fn", dateFnMs)
-                                            .addArg("status", json.get("f29"))
-                                            .addArg("id_transaction", json.get("f48"))
-                                            .addArg("data", "{}")
-                                            //.addArg("data", UtilJson.toStringPretty(json, "{}"))
-                                            .nextBatch();
-
-                                } catch (Throwable th) {
-                                    th.printStackTrace();
-                                    throw new ForwardException(th);
-                                }
-                            });
+                            listJson.forEach(json -> addToRequest(json, jdbcRequest));
                             try {
                                 Util.logConsole("insert");
                                 jdbcResource.execute(jdbcRequest);
@@ -174,7 +175,7 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
     private CSVReader getCSVReader() throws IOException {
         CSVParser parser = new CSVParserBuilder()
                 .withSeparator(';')
-                .withIgnoreQuotations(true)
+                .withIgnoreQuotations(false)
                 .build();
         return new CSVReaderBuilder(new FileReader("web/1/tpp.csv", Charset.forName("UTF-8")))
                 .withSkipLines(1)
@@ -182,10 +183,10 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                 .build();
     }
 
-    private void onRead(AtomicBoolean isThreadRun, int countBatch, Consumer<List<Map<String, Object>>> onRead) throws CsvValidationException, IOException {
+    private void onRead(AtomicBoolean isThreadRun, int sizeBatch, Consumer<List<Map<String, Object>>> onRead) throws CsvValidationException, IOException {
         String[] nextLine;
         CSVReader csvReader = getCSVReader();
-        int curBatchSize = 0;
+        int curSizeBatch = 0;
         List<Map<String, Object>> batch = new ArrayList<>();
         while ((nextLine = csvReader.readNext()) != null && isThreadRun.get()) {
             Map<String, Object> json = new LinkedHashMap<>();
@@ -193,11 +194,11 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                 json.put("f" + i, nextLine[i]);
             }
             batch.add(json);
-            curBatchSize++;
-            if (curBatchSize > countBatch) {
+            curSizeBatch++;
+            if (curSizeBatch > sizeBatch) {
                 onRead.accept(batch);
                 batch = new ArrayList<>();
-                curBatchSize = 0;
+                curSizeBatch = 0;
             }
             //break;
         }

@@ -25,9 +25,12 @@ import ru.jamsys.jt.Orange;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 /*
@@ -79,69 +82,92 @@ public class ParseOrangeCsv implements PromiseGenerator, HttpHandler {
         this.servicePromise = servicePromise;
     }
 
+    AtomicInteger c = new AtomicInteger(0);
+
+    private void addToRequest(Map<String, Object> json, JdbcRequest jdbcRequest) {
+        int i = c.incrementAndGet();
+        json.put("f14", SpbMetroCheckApplication.expoReplace((String) json.get("f14")));
+        json.put("f8", SpbMetroCheckApplication.arrayReplace((String) json.get("f8")));
+        json.put("f9", SpbMetroCheckApplication.arrayReplace((String) json.get("f9")));
+        json.put("f26", SpbMetroCheckApplication.arrayReplace((String) json.get("f26")));
+
+        String dateLocalString = (String) json.get("f11");
+        Long dateLocalMs;
+        try {
+            dateLocalMs = Util.getTimestamp(dateLocalString, "d.M.y H:m") * 1000;
+        } catch (Exception e) {
+            System.out.println(i);
+            System.out.println(UtilJson.toStringPretty(json, "{-}"));
+            throw new RuntimeException(e);
+        }
+
+        jdbcRequest
+                .addArg("date_local", dateLocalMs)
+                .addArg("id_transaction", json.get("f0"))
+                .addArg("data", UtilJson.toStringPretty(json, "{}"))
+                .nextBatch();
+    }
+
     @Override
     public Promise generate() {
-        return servicePromise.get(index, 7_000L)
-                .appendWithResource("loadToDb", JdbcResource.class, "logger", (isThreadRun, promise, jdbcResource) -> {
-                    HttpAsyncResponse input = promise.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
+        return servicePromise.get(index, 700_000L)
+                .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, promise, jdbcResource) -> {
                     try {
-                        onRead(isThreadRun, json -> {
-                            json.put("f14", SpbMetroCheckApplication.expoReplace((String) json.get("f14")));
-                            json.put("f8", SpbMetroCheckApplication.arrayReplace((String) json.get("f8")));
-                            json.put("f9", SpbMetroCheckApplication.arrayReplace((String) json.get("f9")));
-                            json.put("f26", SpbMetroCheckApplication.arrayReplace((String) json.get("f26")));
-
-
-                            String dateLocalString = (String) json.get("f11");
-                            Long dateLocalMs;
-                            try {
-                                dateLocalMs = Util.getTimestamp(dateLocalString, "d.M.y H:m") * 1000;
-                            } catch (Exception e) {
-                                throw new RuntimeException(e);
-                            }
-
-
+                        onRead(isThreadRun, 5000, listJson -> {
                             JdbcRequest jdbcRequest = new JdbcRequest(Orange.INSERT);
-                            jdbcRequest
-                                    .addArg("date_local", dateLocalMs)
-                                    .addArg("id_transaction", json.get("f0"))
-                                    .addArg("data", UtilJson.toStringPretty(json, "{}"));
-
+                            listJson.forEach(json -> addToRequest(json, jdbcRequest));
                             try {
+                                Util.logConsole("insert");
                                 jdbcResource.execute(jdbcRequest);
                             } catch (Throwable th) {
                                 th.printStackTrace();
+                                System.out.println(jdbcRequest.getListArgs());
                                 throw new ForwardException(th);
                             }
                         });
-                        input.setBody("ParseOrangeCsv complete");
                     } catch (Throwable th) {
                         th.printStackTrace();
                         throw new ForwardException(th);
                     }
+                })
+                .then("end", (_, promise) -> {
+                    HttpAsyncResponse input = promise.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
+                    input.setBody("ParseTppCsv complete");
                 });
     }
 
     private CSVReader getCSVReader() throws IOException {
         CSVParser parser = new CSVParserBuilder()
                 .withSeparator(';')
-                .withIgnoreQuotations(true)
+                .withIgnoreQuotations(false)
                 .build();
-        return new CSVReaderBuilder(new FileReader("web/rrr/orange.csv", Charset.forName("Cp1251")))
+        return new CSVReaderBuilder(new FileReader("web/1/orange-1.csv", Charset.forName("UTF-8")))
                 .withSkipLines(1)
                 .withCSVParser(parser)
                 .build();
     }
 
-    private void onRead(AtomicBoolean isThreadRun, Consumer<Map<String, Object>> onRead) throws CsvValidationException, IOException {
+    private void onRead(AtomicBoolean isThreadRun, int sizeBatch, Consumer<List<Map<String, Object>>> onRead) throws CsvValidationException, IOException {
         String[] nextLine;
         CSVReader csvReader = getCSVReader();
+        int curSizeBatch = 0;
+        List<Map<String, Object>> batch = new ArrayList<>();
         while ((nextLine = csvReader.readNext()) != null && isThreadRun.get()) {
             Map<String, Object> json = new LinkedHashMap<>();
             for (int i = 0; i < nextLine.length; i++) {
                 json.put("f" + i, nextLine[i]);
             }
-            onRead.accept(json);
+            batch.add(json);
+            curSizeBatch++;
+            if (curSizeBatch > sizeBatch) {
+                onRead.accept(batch);
+                batch = new ArrayList<>();
+                curSizeBatch = 0;
+            }
+            //break;
+        }
+        if (!batch.isEmpty()) {
+            onRead.accept(batch);
         }
     }
 
