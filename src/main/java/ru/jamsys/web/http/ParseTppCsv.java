@@ -13,7 +13,6 @@ import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.exception.ForwardException;
 import ru.jamsys.core.extension.http.HttpAsyncResponse;
 import ru.jamsys.core.flat.util.Util;
-import ru.jamsys.core.flat.util.UtilJson;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
@@ -131,7 +130,7 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
             String o = (String) json.get("f17");
             for (String key : station.keySet()) {
                 if (station.get(key).contains(o)) {
-                    json.put("gate", key);
+                    json.put("code", key);
                     break;
                 }
             }
@@ -143,8 +142,11 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                     .addArg("status", json.get("f29"))
                     .addArg("id_transaction", json.get("f48"))
                     .addArg("summa", json.get("f22"))
-                    .addArg("gate", json.get("gate"))
-                    .addArg("data", UtilJson.toStringPretty(json, "{}"))
+                    .addArg("code", json.get("code"))
+                    .addArg("gate", Util.padLeft((String) json.get("f35"), 3, "0"))
+                    .addArg("f54", json.get("f54"))
+                    .addArg("data", "{}")
+                    //.addArg("data", UtilJson.toStringPretty(json, "{}"))
                     .nextBatch();
 
         } catch (Throwable th) {
@@ -162,7 +164,7 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                         List<Map<String, Object>> execute = jdbcResource.execute(jdbcRequest);
                         Map<String, String> station = new HashMap<>();
                         execute.forEach(stringObjectMap
-                                -> station.put((String) stringObjectMap.get("gate"), (String) stringObjectMap.get("place")));
+                                -> station.put((String) stringObjectMap.get("code"), (String) stringObjectMap.get("place")));
                         promise.setMapRepository("station", station);
                     } catch (Throwable th) {
                         th.printStackTrace();

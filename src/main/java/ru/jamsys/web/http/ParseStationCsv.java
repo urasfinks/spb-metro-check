@@ -13,14 +13,12 @@ import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.exception.ForwardException;
 import ru.jamsys.core.extension.http.HttpAsyncResponse;
 import ru.jamsys.core.flat.util.Util;
-import ru.jamsys.core.flat.util.UtilJson;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
 import ru.jamsys.core.resource.jdbc.JdbcResource;
 import ru.jamsys.core.web.http.HttpHandler;
 import ru.jamsys.jt.Station;
-import ru.jamsys.jt.TPP;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -54,8 +52,7 @@ public class ParseStationCsv implements PromiseGenerator, HttpHandler {
         try {
             jdbcRequest
                     .addArg("code", json.get("f0"))
-                    .addArg("gate", json.get("f1"))
-                    .addArg("place", json.get("f2"))
+                    .addArg("place", json.get("f15"))
                     .nextBatch();
 
         } catch (Throwable th) {
@@ -97,8 +94,8 @@ public class ParseStationCsv implements PromiseGenerator, HttpHandler {
                 .withSeparator(';')
                 .withIgnoreQuotations(false)
                 .build();
-        return new CSVReaderBuilder(new FileReader("web/station.csv", Charset.forName("UTF-8")))
-                .withSkipLines(1)
+        return new CSVReaderBuilder(new FileReader("web/station-2.csv", Charset.forName("UTF-8")))
+                .withSkipLines(2)
                 .withCSVParser(parser)
                 .build();
     }

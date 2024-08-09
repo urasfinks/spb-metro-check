@@ -14,11 +14,9 @@ public enum Station implements JdbcTemplate {
     INSERT("""            
             INSERT INTO "spb-metro-check".station (
                 code,
-                gate,
                 place
             ) values (
                 ${IN.code::VARCHAR},
-                ${IN.gate::VARCHAR},
                 ${IN.place::VARCHAR}
             );
             """, StatementType.SELECT_WITH_AUTO_COMMIT);
