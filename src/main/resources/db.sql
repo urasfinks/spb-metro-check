@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS "spb-metro-check".tpp
     date_fn timestamp without time zone,
     status character varying(255) COLLATE pg_catalog."default",
     id_transaction character varying(255) COLLATE pg_catalog."default",
+    summa numeric,
+    gate character varying(255) NOT NULL,
     processed character varying(255),
     date_processed timestamp without time zone,
     data json NOT NULL,
@@ -52,3 +54,8 @@ CREATE TABLE "spb-metro-check".station
     place text,
     PRIMARY KEY (id)
 );
+
+CREATE INDEX station_idx_01
+    ON "spb-metro-check".station USING btree
+    (gate ASC NULLS LAST)
+;

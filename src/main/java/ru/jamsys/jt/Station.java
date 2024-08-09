@@ -6,6 +6,11 @@ import ru.jamsys.core.flat.template.jdbc.TemplateJdbc;
 
 public enum Station implements JdbcTemplate {
 
+    SELECT("""
+            SELECT * FROM "spb-metro-check".station
+            ORDER BY id ASC
+            """, StatementType.SELECT_WITH_AUTO_COMMIT),
+
     INSERT("""            
             INSERT INTO "spb-metro-check".station (
                 code,

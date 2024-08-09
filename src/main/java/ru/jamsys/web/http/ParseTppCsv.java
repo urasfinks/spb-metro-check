@@ -19,15 +19,13 @@ import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
 import ru.jamsys.core.resource.jdbc.JdbcResource;
 import ru.jamsys.core.web.http.HttpHandler;
+import ru.jamsys.jt.Station;
 import ru.jamsys.jt.TPP;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
@@ -119,7 +117,7 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
         this.servicePromise = servicePromise;
     }
 
-    private void addToRequest(Map<String, Object> json, JdbcRequest jdbcRequest) {
+    private void addToRequest(Map<String, Object> json, JdbcRequest jdbcRequest, Map<String, String> station) {
         try {
             String dateLocalString = json.get("f0") + " " + json.get("f1");
             Long dateLocalMs = Util.getTimestamp(dateLocalString, "d.M.y H:m:s") * 1000;
@@ -129,12 +127,23 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
             if (!dateFnString.trim().isEmpty()) {
                 dateFnMs = Util.getTimestamp(dateFnString, "d.M.y H:m:s") * 1000;
             }
+
+            String o = (String) json.get("f17");
+            for (String key : station.keySet()) {
+                if (station.get(key).contains(o)) {
+                    json.put("gate", key);
+                    break;
+                }
+            }
+
             //System.out.println(UtilJson.toStringPretty(json, "{}"));
             jdbcRequest
                     .addArg("date_local", dateLocalMs)
                     .addArg("date_fn", dateFnMs)
                     .addArg("status", json.get("f29"))
                     .addArg("id_transaction", json.get("f48"))
+                    .addArg("summa", json.get("f22"))
+                    .addArg("gate", json.get("gate"))
                     .addArg("data", UtilJson.toStringPretty(json, "{}"))
                     .nextBatch();
 
@@ -147,13 +156,28 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 700_000L)
+                .thenWithResource("selectStation", JdbcResource.class, "default", (isThreadRun, promise, jdbcResource) -> {
+                    try {
+                        JdbcRequest jdbcRequest = new JdbcRequest(Station.SELECT);
+                        List<Map<String, Object>> execute = jdbcResource.execute(jdbcRequest);
+                        Map<String, String> station = new HashMap<>();
+                        execute.forEach(stringObjectMap
+                                -> station.put((String) stringObjectMap.get("gate"), (String) stringObjectMap.get("place")));
+                        promise.setMapRepository("station", station);
+                    } catch (Throwable th) {
+                        th.printStackTrace();
+                        throw new ForwardException(th);
+                    }
+                })
                 .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, promise, jdbcResource) -> {
                     try {
+                        Map<String, String> station = promise.getRepositoryMap("station", Map.class);
                         onRead(isThreadRun, 5000, listJson -> {
                             JdbcRequest jdbcRequest = new JdbcRequest(TPP.INSERT);
-                            listJson.forEach(json -> addToRequest(json, jdbcRequest));
+                            listJson.forEach(json -> addToRequest(json, jdbcRequest, station));
                             try {
                                 Util.logConsole("insert");
+                                //System.out.println(jdbcRequest.getListArgs());
                                 jdbcResource.execute(jdbcRequest);
                             } catch (Throwable th) {
                                 th.printStackTrace();

@@ -62,12 +62,14 @@ public enum TPP implements JdbcTemplate {
                 date_fn,
                 status,
                 id_transaction,
+                summa,
                 data
             ) values (
                 ${IN.date_local::TIMESTAMP},
                 ${IN.date_fn::TIMESTAMP},
                 ${IN.status::VARCHAR},
                 ${IN.id_transaction::VARCHAR},
+                ${IN.summa::NUMBER},
                 ${IN.data::VARCHAR}::json
             );
             """, StatementType.SELECT_WITH_AUTO_COMMIT);
