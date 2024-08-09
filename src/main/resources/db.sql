@@ -45,13 +45,10 @@ CREATE UNIQUE INDEX IF NOT EXISTS orange_idx_01
     TABLESPACE pg_default;
 
 CREATE TABLE "spb-metro-check".station
-    (
-        id bigserial NOT NULL,
-        code character varying(255) NOT NULL,
-        gate character varying(255) NOT NULL,
-        place text,
-        PRIMARY KEY (id)
-    );
-
-    ALTER TABLE IF EXISTS "spb-metro-check".station
-        OWNER to postgres;
+(
+    id bigserial NOT NULL,
+    code character varying(255) NOT NULL,
+    gate character varying(255) NOT NULL,
+    place text,
+    PRIMARY KEY (id)
+);
