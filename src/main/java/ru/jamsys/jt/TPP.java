@@ -50,6 +50,12 @@ public enum TPP implements JdbcTemplate {
             )
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
+    PROCESSED("""
+            SELECT * FROM "spb-metro-check".tpp
+            WHERE processed IN (${IN.processed::IN_ENUM_VARCHAR})
+            ORDER BY date_local
+            """, StatementType.SELECT_WITH_AUTO_COMMIT),
+
     FILL_CONTINUE("""
             UPDATE "spb-metro-check".tpp
             SET processed = 'checked', date_processed = now()::timestamp

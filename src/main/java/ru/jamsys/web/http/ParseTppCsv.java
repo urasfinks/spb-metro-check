@@ -157,7 +157,6 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                     execute.forEach(stringObjectMap
                             -> station.put((String) stringObjectMap.get("code"), (String) stringObjectMap.get("place")));
                     promise.setMapRepository("station", station);
-
                 })
                 .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, promise, jdbcResource) -> {
                     @SuppressWarnings("unchecked")
