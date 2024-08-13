@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import ru.jamsys.SpbMetroCheckApplication;
 import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.exception.ForwardException;
-import ru.jamsys.core.extension.http.HttpAsyncResponse;
 import ru.jamsys.core.flat.util.Util;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
@@ -58,11 +57,7 @@ public class ParseStationCsv implements PromiseGenerator, HttpHandler {
                             Util.logConsole("insert");
                             jdbcResource.execute(jdbcRequest);
                         })
-                )
-                .then("end", (_, promise) -> {
-                    HttpAsyncResponse input = promise.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
-                    input.setBody("ParseTppCsv complete");
-                });
+                );
     }
 
 }

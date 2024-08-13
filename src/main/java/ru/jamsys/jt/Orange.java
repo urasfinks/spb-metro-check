@@ -15,14 +15,23 @@ public enum Orange implements JdbcTemplate {
             	WHERE o1.processed IS NULL
             	AND t1.id_transaction IS NULL
             )
-            """, StatementType.CALL_WITH_AUTO_COMMIT),
+            """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     // После того как пометили кого нет в ТПП - пометим все остальные как успешные
     FILL_CONTINUE("""
             UPDATE "spb-metro-check".orange
             SET processed = 'checked', date_processed = now()::timestamp
             WHERE processed IS NULL
-            """, StatementType.CALL_WITH_AUTO_COMMIT),
+            """, StatementType.SELECT_WITH_AUTO_COMMIT),
+
+    TRUNCATE("""
+            TRUNCATE "spb-metro-check".orange
+            """, StatementType.SELECT_WITH_AUTO_COMMIT),
+
+    STATISTIC("""
+            SELECT processed as title, count(*) FROM "spb-metro-check".orange
+            GROUP BY processed
+            """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     INSERT("""
             INSERT INTO "spb-metro-check".orange (

@@ -10,11 +10,11 @@ import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
 import ru.jamsys.core.resource.jdbc.JdbcResource;
 import ru.jamsys.core.web.http.HttpHandler;
-import ru.jamsys.jt.DB;
+import ru.jamsys.jt.TPP;
 
 @Component
 @RequestMapping
-public class CreateDB implements PromiseGenerator, HttpHandler {
+public class TruncateTpp implements PromiseGenerator, HttpHandler {
 
     @Getter
     @Setter
@@ -22,15 +22,15 @@ public class CreateDB implements PromiseGenerator, HttpHandler {
 
     private final ServicePromise servicePromise;
 
-    public CreateDB(ServicePromise servicePromise) {
+    public TruncateTpp(ServicePromise servicePromise) {
         this.servicePromise = servicePromise;
     }
 
     @Override
     public Promise generate() {
-        return servicePromise.get(index, 700_000L)
-                .thenWithResource("createDb", JdbcResource.class, "default", (_, _, jdbcResource) -> {
-                    JdbcRequest jdbcRequest = new JdbcRequest(DB.CREATE);
+        return servicePromise.get(index, 10_000L)
+                .appendWithResource("truncate", JdbcResource.class, "default", (_, _, jdbcResource) -> {
+                    JdbcRequest jdbcRequest = new JdbcRequest(TPP.TRUNCATE);
                     jdbcResource.execute(jdbcRequest);
                 });
     }

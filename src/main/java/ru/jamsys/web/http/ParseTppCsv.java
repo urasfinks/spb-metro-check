@@ -162,18 +162,15 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                 .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, promise, jdbcResource) -> {
                     @SuppressWarnings("unchecked")
                     Map<String, String> station = promise.getRepositoryMap("station", Map.class);
+                    HttpAsyncResponse input = promise.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
                     SpbMetroCheckApplication.onRead(
-                            SpbMetroCheckApplication.getCSVReader("web/1/tpp.csv", 1),
+                            SpbMetroCheckApplication.getCSVReader(input.getHttpRequestReader().getMultiPartFormData("file"), 1),
                             isThreadRun, 5000, listJson -> {
                                 JdbcRequest jdbcRequest = new JdbcRequest(TPP.INSERT);
                                 listJson.forEach(json -> addToRequest(json, jdbcRequest, station));
                                 Util.logConsole("insert");
                                 jdbcResource.execute(jdbcRequest);
                             });
-                })
-                .then("end", (_, promise) -> {
-                    HttpAsyncResponse input = promise.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
-                    input.setBody("ParseTppCsv complete");
                 });
     }
 

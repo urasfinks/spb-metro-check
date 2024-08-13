@@ -31,19 +31,19 @@ public class ProcessTppTransaction implements PromiseGenerator, HttpHandler {
     public Promise generate() {
         Promise promise = servicePromise.get(index, 700_000L);
         return promise
-                .appendWithResource("tppCancel", JdbcResource.class, "default", (_, _, jdbcResource)
+                .thenWithResource("tppCancel", JdbcResource.class, "default", (_, _, jdbcResource)
                         -> jdbcResource.execute(new JdbcRequest(TPP.CANCEL)))
-                .appendWithResource("tppAccepted", JdbcResource.class, "default", (_, _, jdbcResource)
+                .thenWithResource("tppAccepted", JdbcResource.class, "default", (_, _, jdbcResource)
                         -> jdbcResource.execute(new JdbcRequest(TPP.ACCEPTED)))
-                .appendWithResource("tppNotOrange", JdbcResource.class, "default", (_, _, jdbcResource)
+                .thenWithResource("tppNotOrange", JdbcResource.class, "default", (_, _, jdbcResource)
                         -> jdbcResource.execute(new JdbcRequest(TPP.NOT_ORANGE)))
-                .appendWithResource("tppFnFuture", JdbcResource.class, "default", (_, _, jdbcResource)
+                .thenWithResource("tppFnFuture", JdbcResource.class, "default", (_, _, jdbcResource)
                         -> jdbcResource.execute(new JdbcRequest(TPP.FN_FUTURE)))
-                .appendWithResource("tppFillContinue", JdbcResource.class, "default", (_, _, jdbcResource)
+                .thenWithResource("tppFillContinue", JdbcResource.class, "default", (_, _, jdbcResource)
                         -> jdbcResource.execute(new JdbcRequest(TPP.FILL_CONTINUE)))
-                .appendWithResource("orangeNotTpp", JdbcResource.class, "default", (_, _, jdbcResource)
+                .thenWithResource("orangeNotTpp", JdbcResource.class, "default", (_, _, jdbcResource)
                         -> jdbcResource.execute(new JdbcRequest(Orange.NOT_TPP)))
-                .appendWithResource("orangeFillContinue", JdbcResource.class, "default", (_, _, jdbcResource)
+                .thenWithResource("orangeFillContinue", JdbcResource.class, "default", (_, _, jdbcResource)
                         -> jdbcResource.execute(new JdbcRequest(Orange.FILL_CONTINUE)));
     }
 

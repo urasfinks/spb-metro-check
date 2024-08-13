@@ -29,7 +29,7 @@ public enum TPP implements JdbcTemplate {
             	WHERE t1.processed is NULL
             	AND o1.id_transaction IS NULL
             )
-            """, StatementType.CALL_WITH_AUTO_COMMIT),
+            """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     FN_FUTURE("""
             UPDATE "spb-metro-check".tpp
@@ -54,7 +54,16 @@ public enum TPP implements JdbcTemplate {
             UPDATE "spb-metro-check".tpp
             SET processed = 'checked', date_processed = now()::timestamp
             WHERE processed IS NULL
-            """, StatementType.CALL_WITH_AUTO_COMMIT),
+            """, StatementType.SELECT_WITH_AUTO_COMMIT),
+
+    TRUNCATE("""
+            TRUNCATE "spb-metro-check".tpp
+            """, StatementType.SELECT_WITH_AUTO_COMMIT),
+
+    STATISTIC("""
+            SELECT processed as title, count(*) FROM "spb-metro-check".tpp
+            GROUP BY processed
+            """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     INSERT("""
             INSERT INTO "spb-metro-check".tpp (

@@ -36,7 +36,7 @@ public class DownloadCorrection implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 700_000L)
-                .thenWithResource("loadToDb", JdbcResource.class, "default", (_, _, jdbcResource) -> {
+                .thenWithResource("loadFromDb", JdbcResource.class, "default", (_, _, jdbcResource) -> {
 //                    JdbcRequest jdbcRequest = new JdbcRequest(DB.CREATE);
 //                    try {
 //                        jdbcResource.execute(jdbcRequest);

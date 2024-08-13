@@ -8,8 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import ru.jamsys.core.App;
 import ru.jamsys.core.extension.functional.ConsumerThrowing;
 
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -81,6 +80,18 @@ public class SpbMetroCheckApplication {
                 .withIgnoreQuotations(false)
                 .build();
         return new CSVReaderBuilder(new FileReader(path, StandardCharsets.UTF_8)) //Charset.forName("UTF-8")
+                .withSkipLines(offset)
+                .withCSVParser(parser)
+                .build();
+    }
+
+    public static CSVReader getCSVReader(InputStream is, int offset) {
+        CSVParser parser = new CSVParserBuilder()
+                .withSeparator(';')
+                .withIgnoreQuotations(false)
+                .build();
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+        return new CSVReaderBuilder(br) //Charset.forName("UTF-8")
                 .withSkipLines(offset)
                 .withCSVParser(parser)
                 .build();

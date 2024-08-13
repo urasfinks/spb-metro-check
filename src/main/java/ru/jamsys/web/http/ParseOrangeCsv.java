@@ -97,21 +97,19 @@ public class ParseOrangeCsv implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 700_000L)
-                .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, _, jdbcResource)
-                        -> SpbMetroCheckApplication.onRead(
-                        SpbMetroCheckApplication.getCSVReader("web/1/orange-1.csv", 1),
-                        isThreadRun,
-                        5000,
-                        listJson -> {
-                            JdbcRequest jdbcRequest = new JdbcRequest(Orange.INSERT);
-                            listJson.forEach(json -> addToRequest(json, jdbcRequest));
-                            Util.logConsole("insert");
-                            jdbcResource.execute(jdbcRequest);
-                        }
-                ))
-                .then("end", (_, promise) -> {
+                .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, promise, jdbcResource) -> {
                     HttpAsyncResponse input = promise.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
-                    input.setBody("ParseTppCsv complete");
+                    SpbMetroCheckApplication.onRead(
+                            SpbMetroCheckApplication.getCSVReader(input.getHttpRequestReader().getMultiPartFormData("file"), 1),
+                            isThreadRun,
+                            5000,
+                            listJson -> {
+                                JdbcRequest jdbcRequest = new JdbcRequest(Orange.INSERT);
+                                listJson.forEach(json -> addToRequest(json, jdbcRequest));
+                                Util.logConsole("insert");
+                                jdbcResource.execute(jdbcRequest);
+                            }
+                    );
                 });
     }
 
