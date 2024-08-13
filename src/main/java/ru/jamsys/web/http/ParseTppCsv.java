@@ -1,14 +1,10 @@
 package ru.jamsys.web.http;
 
-import com.opencsv.CSVParser;
-import com.opencsv.CSVParserBuilder;
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
-import com.opencsv.exceptions.CsvValidationException;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.jamsys.SpbMetroCheckApplication;
 import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.exception.ForwardException;
 import ru.jamsys.core.extension.http.HttpAsyncResponse;
@@ -21,12 +17,9 @@ import ru.jamsys.core.web.http.HttpHandler;
 import ru.jamsys.jt.Station;
 import ru.jamsys.jt.TPP;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /*
 {
@@ -103,7 +96,7 @@ import java.util.function.Consumer;
 * */
 
 @Component
-@RequestMapping("/parseTppCsv")
+@RequestMapping
 public class ParseTppCsv implements PromiseGenerator, HttpHandler {
 
     @Getter
@@ -150,7 +143,6 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                     .nextBatch();
 
         } catch (Throwable th) {
-            th.printStackTrace();
             throw new ForwardException(th);
         }
     }
@@ -158,79 +150,31 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 700_000L)
-                .thenWithResource("selectStation", JdbcResource.class, "default", (isThreadRun, promise, jdbcResource) -> {
-                    try {
-                        JdbcRequest jdbcRequest = new JdbcRequest(Station.SELECT);
-                        List<Map<String, Object>> execute = jdbcResource.execute(jdbcRequest);
-                        Map<String, String> station = new HashMap<>();
-                        execute.forEach(stringObjectMap
-                                -> station.put((String) stringObjectMap.get("code"), (String) stringObjectMap.get("place")));
-                        promise.setMapRepository("station", station);
-                    } catch (Throwable th) {
-                        th.printStackTrace();
-                        throw new ForwardException(th);
-                    }
+                .thenWithResource("selectStation", JdbcResource.class, "default", (_, promise, jdbcResource) -> {
+                    JdbcRequest jdbcRequest = new JdbcRequest(Station.SELECT);
+                    List<Map<String, Object>> execute = jdbcResource.execute(jdbcRequest);
+                    Map<String, String> station = new HashMap<>();
+                    execute.forEach(stringObjectMap
+                            -> station.put((String) stringObjectMap.get("code"), (String) stringObjectMap.get("place")));
+                    promise.setMapRepository("station", station);
+
                 })
                 .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, promise, jdbcResource) -> {
-                    try {
-                        Map<String, String> station = promise.getRepositoryMap("station", Map.class);
-                        onRead(isThreadRun, 5000, listJson -> {
-                            JdbcRequest jdbcRequest = new JdbcRequest(TPP.INSERT);
-                            listJson.forEach(json -> addToRequest(json, jdbcRequest, station));
-                            try {
+                    @SuppressWarnings("unchecked")
+                    Map<String, String> station = promise.getRepositoryMap("station", Map.class);
+                    SpbMetroCheckApplication.onRead(
+                            SpbMetroCheckApplication.getCSVReader("web/1/tpp.csv", 1),
+                            isThreadRun, 5000, listJson -> {
+                                JdbcRequest jdbcRequest = new JdbcRequest(TPP.INSERT);
+                                listJson.forEach(json -> addToRequest(json, jdbcRequest, station));
                                 Util.logConsole("insert");
-                                //System.out.println(jdbcRequest.getListArgs());
                                 jdbcResource.execute(jdbcRequest);
-                            } catch (Throwable th) {
-                                th.printStackTrace();
-                                System.out.println(jdbcRequest.getListArgs());
-                                throw new ForwardException(th);
-                            }
-                        });
-                    } catch (Throwable th) {
-                        th.printStackTrace();
-                        throw new ForwardException(th);
-                    }
+                            });
                 })
                 .then("end", (_, promise) -> {
                     HttpAsyncResponse input = promise.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
                     input.setBody("ParseTppCsv complete");
                 });
-    }
-
-    private CSVReader getCSVReader() throws IOException {
-        CSVParser parser = new CSVParserBuilder()
-                .withSeparator(';')
-                .withIgnoreQuotations(false)
-                .build();
-        return new CSVReaderBuilder(new FileReader("web/1/tpp.csv", Charset.forName("UTF-8")))
-                .withSkipLines(1)
-                .withCSVParser(parser)
-                .build();
-    }
-
-    private void onRead(AtomicBoolean isThreadRun, int sizeBatch, Consumer<List<Map<String, Object>>> onRead) throws CsvValidationException, IOException {
-        String[] nextLine;
-        CSVReader csvReader = getCSVReader();
-        int curSizeBatch = 0;
-        List<Map<String, Object>> batch = new ArrayList<>();
-        while ((nextLine = csvReader.readNext()) != null && isThreadRun.get()) {
-            Map<String, Object> json = new LinkedHashMap<>();
-            for (int i = 0; i < nextLine.length; i++) {
-                json.put("f" + i, nextLine[i]);
-            }
-            batch.add(json);
-            curSizeBatch++;
-            if (curSizeBatch > sizeBatch) {
-                onRead.accept(batch);
-                batch = new ArrayList<>();
-                curSizeBatch = 0;
-            }
-            //break;
-        }
-        if (!batch.isEmpty()) {
-            onRead.accept(batch);
-        }
     }
 
 }

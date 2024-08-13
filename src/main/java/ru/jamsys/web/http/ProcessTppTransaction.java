@@ -5,7 +5,6 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.jamsys.core.component.ServicePromise;
-import ru.jamsys.core.extension.exception.ForwardException;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
@@ -15,7 +14,7 @@ import ru.jamsys.jt.Orange;
 import ru.jamsys.jt.TPP;
 
 @Component
-@RequestMapping("/processTppTransaction")
+@RequestMapping
 public class ProcessTppTransaction implements PromiseGenerator, HttpHandler {
 
     @Getter
@@ -32,62 +31,20 @@ public class ProcessTppTransaction implements PromiseGenerator, HttpHandler {
     public Promise generate() {
         Promise promise = servicePromise.get(index, 700_000L);
         return promise
-                .appendWithResource("tppCancel", JdbcResource.class, "default", (_, _, jdbcResource) -> {
-                    JdbcRequest jdbcRequest = new JdbcRequest(TPP.CANCEL);
-                    try {
-                        jdbcResource.execute(jdbcRequest);
-                    } catch (Throwable th) {
-                        throw new ForwardException(th);
-                    }
-                })
-                .appendWithResource("tppAccepted", JdbcResource.class, "default", (_, _, jdbcResource) -> {
-                    JdbcRequest jdbcRequest = new JdbcRequest(TPP.ACCEPTED);
-                    try {
-                        jdbcResource.execute(jdbcRequest);
-                    } catch (Throwable th) {
-                        throw new ForwardException(th);
-                    }
-                })
-                .appendWithResource("tppNotOrange", JdbcResource.class, "default", (_, _, jdbcResource) -> {
-                    JdbcRequest jdbcRequest = new JdbcRequest(TPP.NOT_ORANGE);
-                    try {
-                        jdbcResource.execute(jdbcRequest);
-                    } catch (Throwable th) {
-                        throw new ForwardException(th);
-                    }
-                })
-                .appendWithResource("tppFnFuture", JdbcResource.class, "default", (_, _, jdbcResource) -> {
-                    JdbcRequest jdbcRequest = new JdbcRequest(TPP.FN_FUTURE);
-                    try {
-                        jdbcResource.execute(jdbcRequest);
-                    } catch (Throwable th) {
-                        throw new ForwardException(th);
-                    }
-                })
-                .appendWithResource("tppFillContinue", JdbcResource.class, "default", (_, _, jdbcResource) -> {
-                    JdbcRequest jdbcRequest = new JdbcRequest(TPP.FILL_CONTINUE);
-                    try {
-                        jdbcResource.execute(jdbcRequest);
-                    } catch (Throwable th) {
-                        throw new ForwardException(th);
-                    }
-                })
-                .appendWithResource("orangeNotTpp", JdbcResource.class, "default", (_, _, jdbcResource) -> {
-                    JdbcRequest jdbcRequest = new JdbcRequest(Orange.NOT_TPP);
-                    try {
-                        jdbcResource.execute(jdbcRequest);
-                    } catch (Throwable th) {
-                        throw new ForwardException(th);
-                    }
-                })
-                .appendWithResource("orangeFillContinue", JdbcResource.class, "default", (_, _, jdbcResource) -> {
-                    JdbcRequest jdbcRequest = new JdbcRequest(Orange.FILL_CONTINUE);
-                    try {
-                        jdbcResource.execute(jdbcRequest);
-                    } catch (Throwable th) {
-                        throw new ForwardException(th);
-                    }
-                });
+                .appendWithResource("tppCancel", JdbcResource.class, "default", (_, _, jdbcResource)
+                        -> jdbcResource.execute(new JdbcRequest(TPP.CANCEL)))
+                .appendWithResource("tppAccepted", JdbcResource.class, "default", (_, _, jdbcResource)
+                        -> jdbcResource.execute(new JdbcRequest(TPP.ACCEPTED)))
+                .appendWithResource("tppNotOrange", JdbcResource.class, "default", (_, _, jdbcResource)
+                        -> jdbcResource.execute(new JdbcRequest(TPP.NOT_ORANGE)))
+                .appendWithResource("tppFnFuture", JdbcResource.class, "default", (_, _, jdbcResource)
+                        -> jdbcResource.execute(new JdbcRequest(TPP.FN_FUTURE)))
+                .appendWithResource("tppFillContinue", JdbcResource.class, "default", (_, _, jdbcResource)
+                        -> jdbcResource.execute(new JdbcRequest(TPP.FILL_CONTINUE)))
+                .appendWithResource("orangeNotTpp", JdbcResource.class, "default", (_, _, jdbcResource)
+                        -> jdbcResource.execute(new JdbcRequest(Orange.NOT_TPP)))
+                .appendWithResource("orangeFillContinue", JdbcResource.class, "default", (_, _, jdbcResource)
+                        -> jdbcResource.execute(new JdbcRequest(Orange.FILL_CONTINUE)));
     }
 
 }
