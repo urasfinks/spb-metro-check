@@ -15,7 +15,7 @@ import ru.jamsys.jt.TPP;
 
 @Component
 @RequestMapping
-public class ProcessTppTransaction implements PromiseGenerator, HttpHandler {
+public class ProcessTppTransactions implements PromiseGenerator, HttpHandler {
 
     @Getter
     @Setter
@@ -23,7 +23,7 @@ public class ProcessTppTransaction implements PromiseGenerator, HttpHandler {
 
     private final ServicePromise servicePromise;
 
-    public ProcessTppTransaction(ServicePromise servicePromise) {
+    public ProcessTppTransactions(ServicePromise servicePromise) {
         this.servicePromise = servicePromise;
     }
 
