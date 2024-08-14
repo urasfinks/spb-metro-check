@@ -31,6 +31,23 @@
             transition: background .2s ease-in-out, border .2s ease-in-out;
         }
 
+        .drop-container-2 button{
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .drop-container-2 {
+            width:550px;
+            position: relative;
+            gap: 10px;
+            height: 200px;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px dashed #555;
+            color: #444;
+            transition: background .2s ease-in-out, border .2s ease-in-out;
+        }
+
         .drop-container:hover,
         .drop-container.drag-active {
             background: #eee;
@@ -116,31 +133,48 @@
 <table>
     <tr>
         <td>
-            <div class="drop-container" style="margin:5px;">
+            <div class="drop-container-2" style="margin:5px;align-items: baseline;">
                 <button class="extraButton">Очистить ТПП</button>
                 <button class="extraButton">Очистить Orange</button>
-                <button class="extraButton">Вычислить расхождения</button>
+                <button class="extraButton" onclick="window.do('/ProcessTppTransactions')">Маркировка транзакций</button>
+                <button class="extraButton">Сохранить сводную за дату: &nbsp;&nbsp; <input type="date" id="start" name="trip-start" /></button>
+                <button class="extraButton">
+                    Открыть сводную за период: &nbsp;&nbsp;
+                    <input type="date" id="start_date" name="trip-start" />
+                    <input type="date" id="end_date" name="trip-start" />
+                </button>
             </div>
         </td>
         <td rowspan="2" style="height:100%;" valign="top">
-            <div class="drop-container" style="margin:5px;height:460px;">
-                <div>Загружено ТПП: 25842</div>
-                <div>Загружено Orange: 25842</div>
-                <div>accepted_tpp: 25842</div>
-                <div>not_orange: 25842</div>
-                <div>fn_future: 25842</div>
-                <div>not_tpp: 25842</div>
-                <div>cancel: 25842</div>
-                <div>checked: 25842</div>
+            <div class="drop-container" style="margin:5px;height:460px;align-items: baseline;">
+                <div>Не обработано ТПП: <span id="tpp-"></span></div>
+                <div>Не обработано Orange: <span id="orange-"></span></div>
+                <div>
+                    <input type="checkbox" id="c-tpp-accepted_tpp">
+                    Принято в ТПП: <span id="tpp-accepted_tpp"></span></div>
+                <div>
+                    <input type="checkbox" id="c-tpp-not_orange">
+                    Нет в Orange: <span id="tpp-not_orange"></span></div>
+                <div>
+                    <input type="checkbox" id="c-tpp-fn_future">
+                    Разные даты ФН: <span id="tpp-fn_future"></span></div>
+                <div>Не подлежит оплате: <span id="tpp-cancel"></span></div>
+                <div>Сверено ТПП: <span id="tpp-checked"></span></div>
+                <div>
+                    <input type="checkbox" id="c-orange-not_tpp">
+                    Нет данных в ТПП: <span id="orange-not_tpp"></span></div>
+                <div>Сверено orange: <span id="orange-checked"></span></div>
 
                 <button class="extraButton">Возврат (csv)</button>
                 <button class="extraButton">Коррекция (csv)</button>
+                <button class="extraButton">Все поля (csv)</button>
             </div>
         </td>
     </tr>
     <tr>
         <td>
-            <form method="POST" enctype="multipart/form-data" id="form-upload" action="/ParseTppCsv" class="center" target="_blank" style="cursor: pointer;">
+            <form method="POST" enctype="multipart/form-data" id="form-upload" action="/ParseTppCsv" class=""
+                  target="_blank" style="cursor: pointer;">
                 <table class="tx">
                     <tr>
                         <td colspan="2">
@@ -201,6 +235,64 @@
         dropContainer.classList.remove("drag-active");
         fileInput.files = e.dataTransfer.files;
     });
+
+    function ajax(url, callback) {
+        var xmlhttp = new XMLHttpRequest();
+
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == XMLHttpRequest.DONE) { // XMLHttpRequest.DONE == 4
+               if (xmlhttp.status == 200) {
+                   var data = JSON.parse(xmlhttp.responseText);
+                   callback(data);
+               } else {
+                   alert('something else other than 200 was returned');
+               }
+            }
+        };
+
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
+    }
+
+    setInterval(function(){
+        ajax("/StatisticDb", function(data){
+            if(data.exception == true){
+                console.log(data);
+                return;
+            }
+            var ar = [
+                "tpp-",
+                "orange-",
+                "tpp-accepted_tpp",
+                "tpp-not_orange",
+                "tpp-fn_future",
+                "tpp-cancel",
+                "tpp-checked",
+                "orange-not_tpp",
+                "orange-checked"
+            ];
+            for(var i=0;i<ar.length;i++){
+                document.getElementById(ar[i]).innerHTML = "0";
+            }
+            for(var key in data){
+                for(var i=0;i<data[key].length;i++){
+                    var id = key+"-"+ (data[key][i].title == null ? "" : data[key][i].title);
+                    document.getElementById(id).innerHTML = data[key][i].count;
+                }
+            }
+        });
+    }, 2000);
+
+    window.do = function(url){
+        ajax(url, function(data){
+            if(data.exception == true){
+                alert(JSON.stringify(data));
+            }else{
+                alert("Ok");
+            }
+        });
+    }
+
 </script>
 </body>
 </html>
