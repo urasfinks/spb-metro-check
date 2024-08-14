@@ -25,7 +25,8 @@ public enum TPP implements JdbcTemplate {
             SET processed = 'not_orange', date_processed = now()::timestamp
             WHERE id IN (
             	SELECT t1.id FROM "spb-metro-check".tpp t1
-            	LEFT JOIN "spb-metro-check".orange o1 ON t1.id_transaction = o1.id_transaction
+            	LEFT JOIN "spb-metro-check".orange o1
+            	    ON (t1.id_transaction || '-INCOME') = o1.id_transaction
             	WHERE t1.processed is NULL
             	AND o1.id_transaction IS NULL
             )
