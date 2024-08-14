@@ -72,6 +72,11 @@ public enum TPP implements JdbcTemplate {
             GROUP BY processed
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
+    CLEAR_MARK("""
+            UPDATE "spb-metro-check".tpp
+            SET processed = null
+            """, StatementType.SELECT_WITH_AUTO_COMMIT),
+
     INSERT("""
             INSERT INTO "spb-metro-check".tpp (
                 date_local,

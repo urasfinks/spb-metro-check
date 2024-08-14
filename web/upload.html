@@ -23,7 +23,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 200px;
+            height: 250px;
             padding: 20px;
             border-radius: 10px;
             border: 2px dashed #555;
@@ -124,6 +124,19 @@
             width: 500px;
         }
 
+        #error{
+            color:red;
+            transition: background .2s ease-in-out, border .2s ease-in-out;
+        }
+        .label{
+            color:#999;
+            font-weight:bold;
+            font-size:80%;
+        }
+        .group-value{
+            padding:5px 3px;
+        }
+
     </style>
 </head>
 
@@ -132,39 +145,52 @@
 
 <table>
     <tr>
+        <td colspan="2">
+            <div id="error"></div>
+        </td>
+    </tr>
+    <tr>
         <td>
             <div class="drop-container-2" style="margin:5px;align-items: baseline;">
-                <button class="extraButton">Очистить ТПП</button>
-                <button class="extraButton">Очистить Orange</button>
-                <button class="extraButton" onclick="window.do('/ProcessTppTransactions')">Маркировка транзакций</button>
+                <button class="extraButton" onclick="window.do('/TruncateTpp')">Очистить ТПП</button>
+                <button class="extraButton" onclick="window.do('/TruncateOrange')">Очистить Orange</button>
+                <button class="extraButton" onclick="window.do('/MarkingTransaction')">Маркировка транзакций</button>
+                <button class="extraButton" onclick="window.do('/ClearMark')">Очистить маркировку</button>
                 <button class="extraButton">Сохранить сводную за дату: &nbsp;&nbsp; <input type="date" id="start" name="trip-start" /></button>
-                <button class="extraButton">
+                <!--<button class="extraButton">
                     Открыть сводную за период: &nbsp;&nbsp;
                     <input type="date" id="start_date" name="trip-start" />
                     <input type="date" id="end_date" name="trip-start" />
-                </button>
+                </button>-->
             </div>
         </td>
         <td rowspan="2" style="height:100%;" valign="top">
-            <div class="drop-container" style="margin:5px;height:460px;align-items: baseline;">
-                <div>Не обработано ТПП: <span id="tpp-"></span></div>
-                <div>Не обработано Orange: <span id="orange-"></span></div>
+            <div class="drop-container" style="margin:5px;height:590px;align-items: baseline;">
+
+                <div class="label">ТПП:</div>
+                <div>Не обработано: <span id="tpp-"></span></div>
+                <div>Сверено: <span id="tpp-checked"></span></div>
+                <div>Не подлежит оплате: <span id="tpp-cancel"></span></div>
                 <div>
-                    <input type="checkbox" id="c-tpp-accepted_tpp">
-                    Принято в ТПП: <span id="tpp-accepted_tpp"></span></div>
+                    <input type="checkbox" id="c-tpp-accepted_tpp" onchange="window.onChangeCheckBox(this)">
+                    Принято: <span id="tpp-accepted_tpp"></span></div>
                 <div>
-                    <input type="checkbox" id="c-tpp-not_orange">
+                    <input type="checkbox" id="c-tpp-not_orange" onchange="window.onChangeCheckBox(this)">
                     Нет в Orange: <span id="tpp-not_orange"></span></div>
                 <div>
-                    <input type="checkbox" id="c-tpp-fn_future">
+                    <input type="checkbox" id="c-tpp-fn_future" onchange="window.onChangeCheckBox(this)">
                     Разные даты ФН: <span id="tpp-fn_future"></span></div>
-                <div>Не подлежит оплате: <span id="tpp-cancel"></span></div>
-                <div>Сверено ТПП: <span id="tpp-checked"></span></div>
-                <div>
-                    <input type="checkbox" id="c-orange-not_tpp">
-                    Нет данных в ТПП: <span id="orange-not_tpp"></span></div>
-                <div>Сверено orange: <span id="orange-checked"></span></div>
 
+
+                <div class="label">Orange:</div>
+                <div>Не обработано: <span id="orange-"></span></div>
+                <div>
+                    <input type="checkbox" id="c-orange-not_tpp" onchange="window.onChangeCheckBox(this)">
+                    Нет данных в ТПП: <span id="orange-not_tpp"></span></div>
+                <div>Сверено: <span id="orange-checked"></span></div>
+                <div class="label">Orange сводная:</div>
+                <div id="orange_group"></div>
+                <br>
                 <button class="extraButton">Возврат (csv)</button>
                 <button class="extraButton">Коррекция (csv)</button>
                 <button class="extraButton">Все поля (csv)</button>
@@ -208,6 +234,17 @@
 
 <script type="text/javascript">
 
+    window.$$ = function(id){
+        return document.getElementById(id);
+    }
+
+    window.selectedItem = {};
+
+    window.onChangeCheckBox = function(obj){
+        window.selectedItem[obj.id] = obj.checked;
+        console.log(window.selectedItem);
+    }
+
     window.selectOnChange = function(obj){
         var act = obj.options[obj.selectedIndex].value;
         console.log(act);
@@ -237,6 +274,7 @@
     });
 
     function ajax(url, callback) {
+        $$("error").innerHTML = "";
         var xmlhttp = new XMLHttpRequest();
 
         xmlhttp.onreadystatechange = function() {
@@ -244,8 +282,8 @@
                if (xmlhttp.status == 200) {
                    var data = JSON.parse(xmlhttp.responseText);
                    callback(data);
-               } else {
-                   alert('something else other than 200 was returned');
+               } else if(xmlhttp.status == 0){
+                   $$("error").innerHTML = 'Server error';
                }
             }
         };
@@ -255,6 +293,10 @@
     }
 
     setInterval(function(){
+        load();
+    }, 5000);
+
+    function load(){
         ajax("/StatisticDb", function(data){
             if(data.exception == true){
                 console.log(data);
@@ -275,13 +317,26 @@
                 document.getElementById(ar[i]).innerHTML = "0";
             }
             for(var key in data){
+                if(key === "orange-2"){
+                    continue;
+                }
                 for(var i=0;i<data[key].length;i++){
                     var id = key+"-"+ (data[key][i].title == null ? "" : data[key][i].title);
                     document.getElementById(id).innerHTML = data[key][i].count;
                 }
             }
+            if(data["orange-2"] != undefined){
+                var str = "";
+                for(var i=0;i<data[key].length;i++){
+                    str += "<div class='group-value'>"+data[key][i].title +": "+data[key][i].count+"</div>";
+                }
+                $$("orange_group").innerHTML = str;
+            }
         });
-    }, 2000);
+    }
+    load();
+
+
 
     window.do = function(url){
         ajax(url, function(data){

@@ -86,11 +86,19 @@ public class ParseOrangeCsv implements PromiseGenerator, HttpHandler {
             System.out.println(UtilJson.toStringPretty(json, "{-}"));
             throw new RuntimeException(e);
         }
+        String complexCode = (String) json.get("f21");
+
+        String summa = (String) json.get("f10");
 
         jdbcRequest
                 .addArg("date_local", dateLocalMs)
                 .addArg("id_transaction", json.get("f0"))
-                .addArg("data", UtilJson.toStringPretty(json, "{}"))
+                .addArg("summa", summa.replace(",", "."))
+                .addArg("code", complexCode.substring(0,3))
+                .addArg("gate", complexCode.substring(3))
+                .addArg("f24", json.get("f24"))
+                .addArg("data", "{}")
+                //.addArg("data", UtilJson.toStringPretty(json, "{}"))
                 .nextBatch();
     }
 

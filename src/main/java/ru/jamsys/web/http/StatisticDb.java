@@ -39,11 +39,14 @@ public class StatisticDb implements PromiseGenerator, HttpHandler {
                         -> p.setMapRepository("tpp", jdbcResource.execute(new JdbcRequest(TPP.STATISTIC))))
                 .thenWithResource("loadOrangeStatistic", JdbcResource.class, "default", (_, p, jdbcResource)
                         -> p.setMapRepository("orange", jdbcResource.execute(new JdbcRequest(Orange.STATISTIC))))
+                .thenWithResource("loadOrangeStatistic", JdbcResource.class, "default", (_, p, jdbcResource)
+                        -> p.setMapRepository("orange-2", jdbcResource.execute(new JdbcRequest(Orange.STATISTIC_2))))
                 .onComplete((_, p) -> {
                     HttpAsyncResponse ar = p.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
                     ar.setBodyFromMap(new HashMapBuilder<>()
                             .append("tpp", p.getRepositoryMap("tpp", List.class))
                             .append("orange", p.getRepositoryMap("orange", List.class))
+                            .append("orange-2", p.getRepositoryMap("orange-2", List.class))
                     );
                     ar.complete();
                 });

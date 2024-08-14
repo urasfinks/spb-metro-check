@@ -33,15 +33,32 @@ public enum Orange implements JdbcTemplate {
             SELECT processed as title, count(*) FROM "spb-metro-check".orange
             GROUP BY processed
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
+    STATISTIC_2("""
+            SELECT f24 as title, count(*) FROM "spb-metro-check".orange
+            GROUP BY f24
+            """, StatementType.SELECT_WITH_AUTO_COMMIT),
+
+    CLEAR_MARK("""
+            UPDATE "spb-metro-check".orange
+            SET processed = null
+            """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     INSERT("""
             INSERT INTO "spb-metro-check".orange (
                 date_local,
                 id_transaction,
+                summa,
+                code,
+                gate,
+                f24,
                 data
             ) values (
                 ${IN.date_local::TIMESTAMP},
                 ${IN.id_transaction::VARCHAR},
+                ${IN.summa::NUMBER},
+                ${IN.code::VARCHAR},
+                ${IN.gate::VARCHAR},
+                ${IN.f24::VARCHAR},
                 ${IN.data::VARCHAR}::json
             );
             """, StatementType.SELECT_WITH_AUTO_COMMIT);
