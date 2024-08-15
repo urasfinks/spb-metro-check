@@ -21,7 +21,7 @@ body {
 
 .td-round .button,
 .td-round .extraButton{
-    margin: 4px;
+    margin: 4px 0px;
 }
 .td-round {
     padding: 20px;
@@ -39,10 +39,10 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 250px;
     border-radius: 10px;
     color: #444;
     transition: background .2s ease-in-out, border .2s ease-in-out;
+    padding: 15px 0px;
 }
 
 .drop-container-2 button {
