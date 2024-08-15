@@ -69,3 +69,12 @@ CREATE TABLE IF NOT EXISTS "spb-metro-check".kkt
     summa_agg numeric,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS "spb-metro-check".total
+(
+    id bigserial NOT NULL,
+    date_add timestamp without time zone NOT NULL DEFAULT (now())::timestamp without time zone,
+    date_local timestamp without time zone,
+    data json NOT NULL,
+    PRIMARY KEY (id)
+);

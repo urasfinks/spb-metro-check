@@ -140,6 +140,15 @@ window.do = function (url, obj) {
     });
 }
 
+window.blank_total = function () {
+    var total_date = document.getElementById('total_date').value;
+    if (total_date == undefined || total_date.trim() == "") {
+        alert("Не задана дата");
+        return;
+    }
+    window.blank('/StatisticTotal?docDate=' + total_date);
+}
+
 window.blank_correction = function () {
     var refund_date = document.getElementById('refund_date').value;
     if (refund_date == undefined || refund_date.trim() == "") {
