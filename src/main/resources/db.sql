@@ -67,7 +67,5 @@ CREATE TABLE IF NOT EXISTS "spb-metro-check".kkt
     gate character varying(255) NOT NULL,
     count_agg numeric,
     summa_agg numeric,
-    processed character varying(255),
-    date_processed timestamp without time zone,
     PRIMARY KEY (id)
 );

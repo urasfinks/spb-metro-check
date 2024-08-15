@@ -63,7 +63,7 @@ setInterval(function () {
 function load() {
     ajax("/StatisticDb", function (data) {
         if (data.exception == true) {
-            console.log(data);
+            alert(JSON.stringify(data));
             return;
         }
         var ar = [
@@ -106,7 +106,7 @@ function load_kkt(obj) {
     ajax("/StatisticKkt", function (data) {
         obj.classList.toggle('button--loading');
         if (data.exception == true) {
-            console.log(data);
+            alert(JSON.stringify(data));
             return;
         }
         var ar = [
