@@ -11,6 +11,7 @@ import ru.jamsys.core.extension.functional.ConsumerThrowing;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -85,16 +86,20 @@ public class SpbMetroCheckApplication {
                 .build();
     }
 
-    public static CSVReader getCSVReader(InputStream is, int offset) {
+    public static CSVReader getCSVReader(InputStream is, int offset, String charset) {
         CSVParser parser = new CSVParserBuilder()
                 .withSeparator(';')
                 .withIgnoreQuotations(false)
                 .build();
-        BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
-        return new CSVReaderBuilder(br) //Charset.forName("UTF-8")
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName(charset)));
+        return new CSVReaderBuilder(br)
                 .withSkipLines(offset)
                 .withCSVParser(parser)
                 .build();
+    }
+
+    public static CSVReader getCSVReader(InputStream is, int offset) {
+        return getCSVReader(is, offset, "UTF-8");
     }
 
 }

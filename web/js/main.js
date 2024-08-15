@@ -1,15 +1,15 @@
-window.$$ = function(id){
+window.$$ = function (id) {
     return document.getElementById(id);
 }
 
 window.selectedItem = {};
 
-window.onChangeCheckBox = function(obj){
+window.onChangeCheckBox = function (obj) {
     window.selectedItem[obj.id] = obj.checked;
     console.log(window.selectedItem);
 }
 
-window.selectOnChange = function(obj){
+window.selectOnChange = function (obj) {
     var act = obj.options[obj.selectedIndex].value;
     console.log(act);
     document.getElementById("form-upload").action = act;
@@ -41,14 +41,14 @@ function ajax(url, callback) {
     $$("error").innerHTML = "";
     var xmlhttp = new XMLHttpRequest();
 
-    xmlhttp.onreadystatechange = function() {
+    xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState == XMLHttpRequest.DONE) { // XMLHttpRequest.DONE == 4
-           if (xmlhttp.status == 200) {
-               var data = JSON.parse(xmlhttp.responseText);
-               callback(data);
-           } else if(xmlhttp.status == 0){
-               $$("error").innerHTML = 'Server error';
-           }
+            if (xmlhttp.status == 200) {
+                var data = JSON.parse(xmlhttp.responseText);
+                callback(data);
+            } else if (xmlhttp.status == 0) {
+                $$("error").innerHTML = 'Server error';
+            }
         }
     };
 
@@ -56,13 +56,13 @@ function ajax(url, callback) {
     xmlhttp.send();
 }
 
-setInterval(function(){
+setInterval(function () {
     load();
 }, 5000);
 
-function load(){
-    ajax("/StatisticDb", function(data){
-        if(data.exception == true){
+function load() {
+    ajax("/StatisticDb", function (data) {
+        if (data.exception == true) {
             console.log(data);
             return;
         }
@@ -77,37 +77,63 @@ function load(){
             "orange-not_tpp",
             "orange-checked"
         ];
-        for(var i=0;i<ar.length;i++){
+        for (var i = 0; i < ar.length; i++) {
             document.getElementById(ar[i]).innerHTML = "0";
         }
-        for(var key in data){
-            if(key === "orange-2"){
+        for (var key in data) {
+            if (key === "orange-2") {
                 continue;
             }
-            for(var i=0;i<data[key].length;i++){
-                var id = key+"-"+ (data[key][i].title == null ? "" : data[key][i].title);
+            for (var i = 0; i < data[key].length; i++) {
+                var id = key + "-" + (data[key][i].title == null ? "" : data[key][i].title);
                 document.getElementById(id).innerHTML = data[key][i].count;
             }
         }
-        if(data["orange-2"] != undefined){
+        if (data["orange-2"] != undefined) {
             var str = "";
-            for(var i=0;i<data[key].length;i++){
-                str += "<div class='group-value'>"+data[key][i].title +": "+data[key][i].count+"</div>";
+            for (var i = 0; i < data[key].length; i++) {
+                str += "<div>" + data[key][i].title + ": " + data[key][i].count + "</div>";
             }
             $$("orange_group").innerHTML = str;
         }
     });
 }
+
 load();
 
-
-window.do = function(url, obj){
+function load_kkt(obj) {
     obj.classList.toggle('button--loading');
-    ajax(url, function(data){
+    ajax("/StatisticKkt", function (data) {
         obj.classList.toggle('button--loading');
-        if(data.exception == true){
+        if (data.exception == true) {
+            console.log(data);
+            return;
+        }
+        var ar = [
+            "kkt-count",
+            "kkt-orange",
+            "kkt-diff"
+        ];
+        for (var i = 0; i < ar.length; i++) {
+            $$(ar[i]).innerHTML = "0";
+        }
+        for (var key in data) {
+            for (var i = 0; i < data[key].length; i++) {
+                var id = key + "-" + (data[key][i].title == null ? "" : data[key][i].title);
+                document.getElementById(id).innerHTML = data[key][i].count;
+            }
+        }
+    });
+}
+load_kkt($$("load_kkt"));
+
+window.do = function (url, obj) {
+    obj.classList.toggle('button--loading');
+    ajax(url, function (data) {
+        obj.classList.toggle('button--loading');
+        if (data.exception == true) {
             alert(JSON.stringify(data));
-        }else{
+        } else {
             alert("Ok");
         }
     });

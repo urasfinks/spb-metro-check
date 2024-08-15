@@ -1,28 +1,35 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <link href="css/loader.css" rel="stylesheet" />
-    <link href="css/main.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link href="css/loader.css" rel="stylesheet"/>
+    <link href="css/main.css" rel="stylesheet"/>
 </head>
 
 
 <body>
 
-<table>
+<table class="center tb" style="min-width: 500px;max-width: 1100px;">
     <tr>
         <td colspan="2">
             <div id="error"></div>
         </td>
     </tr>
     <tr>
-        <td>
+        <td class="td-round">
 
-            <div class="drop-container-2" style="margin:5px;align-items: baseline;">
+            <div style="margin:5px;align-items: baseline;">
+
+                <div class="label">Операции</div>
+
                 <button type="button" class="button" onclick="window.do('/TruncateTpp', this)">
                     <span class="button__text">Очистить ТПП</span>
                 </button>
                 <button type="button" class="button" onclick="window.do('/TruncateOrange', this)">
                     <span class="button__text">Очистить Orange</span>
+                </button>
+                <button type="button" class="button" onclick="window.do('/TruncateKkt', this)">
+                    <span class="button__text">Очистить KKT</span>
                 </button>
                 <button type="button" class="button" onclick="window.do('/MarkingTransaction', this)">
                     <span class="button__text">Обработать транзакции</span>
@@ -30,73 +37,81 @@
                 <button type="button" class="button" onclick="window.do('/ClearMark', this)">
                     <span class="button__text">Сбросить обработку</span>
                 </button>
-                <button class="extraButton">Сохранить сводную за дату: &nbsp;&nbsp; <input type="date" id="start" name="trip-start" /></button>
+
+                <div class="label">Csv</div>
+
+                <button class="extraButton">Принято ТПП.csv</button><!--Custom-->
+                <button class="extraButton">Нет в Orange.csv</button>
+                <button class="extraButton">Возврат.csv</button><!--fn_future-->
+                <button class="extraButton">Коррекция.csv</button><!--fn_future, Not_orange-->
+                <button class="extraButton">Нет в ТПП.csv</button><!--Not_tpp-->
+                <button class="extraButton">Расхождения с ККТ.csv</button><!--Not_tpp-->
+
                 <!--<button class="extraButton">
                     Открыть сводную за период: &nbsp;&nbsp;
                     <input type="date" id="start_date" name="trip-start" />
                     <input type="date" id="end_date" name="trip-start" />
                 </button>-->
+
+                <div class="label">Сводная</div>
+
+                <button class="extraButton">Сохранить сводную за дату: &nbsp;&nbsp;
+                    <input type="date" id="start" name="trip-start"/>
+                </button>
             </div>
         </td>
-        <td rowspan="2" style="height:100%;width:250px;" valign="top">
-            <div class="drop-container" style="margin:5px;height:590px;align-items: baseline;">
+        <td rowspan="2" style="width:250px;line-height: 150%;" valign="top" class="td-round logo">
+            <div style="">
 
-                <div class="label">ТПП:</div>
+                <div class="label">ТПП</div>
                 <div>Не обработано: <span id="tpp-"></span></div>
                 <div>Сверено: <span id="tpp-checked"></span></div>
                 <div>Не подлежит оплате: <span id="tpp-cancel"></span></div>
-                <div>
-                    <input type="checkbox" id="c-tpp-accepted_tpp" onchange="window.onChangeCheckBox(this)">
-                    Принято: <span id="tpp-accepted_tpp"></span></div>
-                <div>
-                    <input type="checkbox" id="c-tpp-not_orange" onchange="window.onChangeCheckBox(this)">
-                    Нет в Orange: <span id="tpp-not_orange"></span></div>
-                <div>
-                    <input type="checkbox" id="c-tpp-fn_future" onchange="window.onChangeCheckBox(this)">
-                    Разные даты ФН: <span id="tpp-fn_future"></span></div>
+                <div>Принято: <span id="tpp-accepted_tpp"></span></div>
+                <div>Нет в Orange: <span id="tpp-not_orange"></span></div>
+                <div>Разные даты ФН: <span id="tpp-fn_future"></span></div>
 
 
-                <div class="label">Orange:</div>
+                <div class="label">Orange</div>
                 <div>Не обработано: <span id="orange-"></span></div>
-                <div>
-                    <input type="checkbox" id="c-orange-not_tpp" onchange="window.onChangeCheckBox(this)">
-                    Нет данных в ТПП: <span id="orange-not_tpp"></span></div>
+                <div>Нет данных в ТПП: <span id="orange-not_tpp"></span></div>
                 <div>Сверено: <span id="orange-checked"></span></div>
-                <div class="label">Orange сводная:</div>
+                <div class="label">Orange сводная</div>
                 <div id="orange_group"></div>
+
+                <div class="label">ККТ</div>
+                <div>Загружено: <span id="kkt-count"></span></div>
+                <div>Orange: <span id="kkt-orange"></span></div>
+                <div>Различия: <span id="kkt-diff"></span></div>
                 <br>
-                <button class="extraButton">Возврат (csv)</button>
-                <button class="extraButton">Коррекция (csv)</button>
-                <button class="extraButton">Все поля (csv)</button>
+                <button type="button" class="button" onclick="window.load_kkt(this)" id="load_kkt">
+                    <span class="button__text">Обновить информацию ККТ</span>
+                </button>
             </div>
         </td>
     </tr>
     <tr>
-        <td>
-            <form method="POST" enctype="multipart/form-data" id="form-upload" action="/ParseTppCsv" class=""
-                  target="_blank" style="cursor: pointer;">
+        <td class="td-round">
+            <form method="POST" enctype="multipart/form-data" id="form-upload" action="/ParseTppCsv" target="_blank" style="cursor: pointer;">
                 <table class="tx">
                     <tr>
                         <td colspan="2">
                             <label for="upload" class="drop-container" id="dropcontainer">
                                 <span class="drop-title">Перетащите файл</span>
                                 или
-                                <input type="file" id="upload" name="file" required onchange="getName()">
+                                <input type="file" id="upload" name="file" required>
                             </label>
                         </td>
                     </tr>
                     <tr>
-                        <td style="color: #777;">Тип реестра:</td>
-                        <td>
+                        <td colspan="2" align="right">
+                            Тип реестра:
                             <select name="sel" onchange="window.selectOnChange(this)">
                                 <option value="/ParseTppCsv">ТПП</option>
                                 <option value="/ParseOrangeCsv">Orange</option>
+                                <option value="/ParseKKTCsv">ККТ</option>
                             </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2" align="right">
-                            <input type="submit" value="Загрузить" class="extraButton">
+                            <input type="submit" value="Загрузить" class="extraButton orange-bg">
                         </td>
                     </tr>
                 </table>

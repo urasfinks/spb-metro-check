@@ -57,3 +57,17 @@ CREATE TABLE "spb-metro-check".station
     place text,
     PRIMARY KEY (id)
 );
+
+CREATE TABLE IF NOT EXISTS "spb-metro-check".kkt
+(
+    id bigserial NOT NULL,
+    date_add timestamp without time zone NOT NULL DEFAULT (now())::timestamp without time zone,
+    summa numeric,
+    code character varying(255) NOT NULL,
+    gate character varying(255) NOT NULL,
+    count_agg numeric,
+    summa_agg numeric,
+    processed character varying(255),
+    date_processed timestamp without time zone,
+    PRIMARY KEY (id)
+);
