@@ -45,7 +45,7 @@ public class CsvNotOrange implements PromiseGenerator, HttpHandler {
         return servicePromise.get(index, 700_000L)
                 .thenWithResource("loadFromDb", JdbcResource.class, "default", (_, p, jdbcResource) -> {
                     JdbcRequest jdbcRequest = new JdbcRequest(TPP.PROCESSED);
-                    jdbcRequest.addArg("processed", List.of("not_orange"));
+                    jdbcRequest.addArg("processed", List.of("not_orange1"));
                     p.setMapRepository("result", jdbcResource.execute(jdbcRequest));
                 })
                 .then("generateCsv", (_, promise) -> {
@@ -61,13 +61,15 @@ public class CsvNotOrange implements PromiseGenerator, HttpHandler {
 
                     CSVWriter csvWriter = new CSVWriter(response.getWriter());
                     AtomicInteger counter = new AtomicInteger(0);
-                    String[] fLine = getLineCorrectionFirstLine(result.getFirst());
-                    csvWriter.writeNext(fLine);
-                    result.forEach(stringObjectMap -> csvWriter.writeNext(getLineCorrection(
-                            stringObjectMap,
-                            counter,
-                            fLine
-                    )));
+                    if (!result.isEmpty()) {
+                        String[] fLine = getLineCorrectionFirstLine(result.getFirst());
+                        csvWriter.writeNext(fLine);
+                        result.forEach(stringObjectMap -> csvWriter.writeNext(getLineCorrection(
+                                stringObjectMap,
+                                counter,
+                                fLine
+                        )));
+                    }
                     csvWriter.flush();
                     csvWriter.close();
                 });

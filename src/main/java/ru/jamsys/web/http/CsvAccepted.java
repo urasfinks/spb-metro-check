@@ -61,13 +61,15 @@ public class CsvAccepted implements PromiseGenerator, HttpHandler {
 
                     CSVWriter csvWriter = new CSVWriter(response.getWriter());
                     AtomicInteger counter = new AtomicInteger(0);
-                    String[] fLine = getLineCorrectionFirstLine(result.getFirst());
-                    csvWriter.writeNext(fLine);
-                    result.forEach(stringObjectMap -> csvWriter.writeNext(getLineCorrection(
-                            stringObjectMap,
-                            counter,
-                            fLine
-                    )));
+                    if (!result.isEmpty()) {
+                        String[] fLine = getLineCorrectionFirstLine(result.getFirst());
+                        csvWriter.writeNext(fLine);
+                        result.forEach(stringObjectMap -> csvWriter.writeNext(getLineCorrection(
+                                stringObjectMap,
+                                counter,
+                                fLine
+                        )));
+                    }
                     csvWriter.flush();
                     csvWriter.close();
                 });
