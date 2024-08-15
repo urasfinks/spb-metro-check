@@ -48,7 +48,7 @@
                     <input type="date" id="refund_date" name="trip-start" onclick="event.stopPropagation()" style="font-size: 10px;"/>
                     <input type="text" id="doc_number" placeholder="№" onclick="event.stopPropagation()" style="width:40px;font-size: 10px;"/>
                 </button><!--fn_future, Not_orange-->
-                <button class="extraButton">Нет в ТПП.csv</button><!--Not_tpp-->
+                <button class="extraButton" onclick="window.blank('/CsvNotTpp')">Нет данных в ТПП.csv</button><!--Not_tpp-->
                 <button class="extraButton">Расхождения с ККТ.csv</button><!--Not_tpp-->
 
                 <!--<button class="extraButton">

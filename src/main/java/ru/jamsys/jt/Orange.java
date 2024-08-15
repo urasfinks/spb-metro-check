@@ -33,6 +33,13 @@ public enum Orange implements JdbcTemplate {
             SELECT processed as title, count(*) FROM "spb-metro-check".orange
             GROUP BY processed
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
+
+    PROCESSED("""
+            SELECT * FROM "spb-metro-check".orange
+            WHERE processed IN (${IN.processed::IN_ENUM_VARCHAR})
+            ORDER BY date_local
+            """, StatementType.SELECT_WITH_AUTO_COMMIT),
+
     STATISTIC_2("""
             SELECT f24 as title, count(*) FROM "spb-metro-check".orange
             GROUP BY f24
