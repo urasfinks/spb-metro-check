@@ -125,6 +125,7 @@ function load_kkt(obj) {
         }
     });
 }
+
 load_kkt($$("load_kkt"));
 
 window.do = function (url, obj) {
@@ -139,9 +140,23 @@ window.do = function (url, obj) {
     });
 }
 
-window.blank = function(url){
+window.blank_correction = function () {
+    var refund_date = document.getElementById('refund_date').value;
+    if (refund_date == undefined || refund_date.trim() == "") {
+        alert("Не задана дата");
+        return;
+    }
+    var doc_number = document.getElementById('doc_number').value;
+    if (doc_number == undefined || doc_number.trim() == "") {
+        alert("Не задан номер документа");
+        return;
+    }
+    window.blank('/CsvCorrection?docNum=' + doc_number + '&docDate=' + refund_date);
+}
+
+window.blank = function (url) {
     var anchor = document.createElement('a');
     anchor.href = url;
-    anchor.target="_blank";
+    anchor.target = "_blank";
     anchor.click();
 }
