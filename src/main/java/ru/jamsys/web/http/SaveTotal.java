@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.builder.HashMapBuilder;
 import ru.jamsys.core.extension.http.HttpAsyncResponse;
+import ru.jamsys.core.flat.util.UtilJson;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
@@ -22,7 +23,7 @@ import java.util.List;
 
 @Component
 @RequestMapping
-public class StatisticTotal implements PromiseGenerator, HttpHandler {
+public class SaveTotal implements PromiseGenerator, HttpHandler {
 
     @Getter
     @Setter
@@ -30,7 +31,7 @@ public class StatisticTotal implements PromiseGenerator, HttpHandler {
 
     private final ServicePromise servicePromise;
 
-    public StatisticTotal(ServicePromise servicePromise) {
+    public SaveTotal(ServicePromise servicePromise) {
         this.servicePromise = servicePromise;
     }
 
@@ -54,11 +55,9 @@ public class StatisticTotal implements PromiseGenerator, HttpHandler {
                             .append("orange", p.getRepositoryMap("orange", List.class))
                             .append("orange-2", p.getRepositoryMap("orange-2", List.class))
                             .append("kkt", p.getRepositoryMap("kkt", List.class));
-                    System.out.println(input.getHttpRequestReader().getMap().getOrDefault("docDate", "-") + "'T'00:00:00");
-//                    jdbcRequest.addArg("date_local", input.getHttpRequestReader().getMap().getOrDefault("docDate", "-")+"'T'00:00:00");
-//                    jdbcRequest.addArg("data", UtilJson.toStringPretty(append, "{}"));
-//                    System.out.println(jdbcRequest.getListArgs());
-                    //jdbcResource.execute(jdbcRequest);
+                    jdbcRequest.addArg("date_local", input.getHttpRequestReader().getMap().getOrDefault("docDate", "-"));
+                    jdbcRequest.addArg("data", UtilJson.toStringPretty(append, "{}"));
+                    jdbcResource.execute(jdbcRequest);
                 });
     }
 

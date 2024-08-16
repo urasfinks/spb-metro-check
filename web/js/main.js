@@ -146,7 +146,7 @@ window.blank_total = function () {
         alert("Не задана дата");
         return;
     }
-    window.blank('/StatisticTotal?docDate=' + total_date);
+    window.blank('/SaveTotal?docDate=' + total_date);
 }
 
 window.blank_correction = function () {

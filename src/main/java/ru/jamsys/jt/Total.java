@@ -7,11 +7,11 @@ import ru.jamsys.core.flat.template.jdbc.TemplateJdbc;
 public enum Total implements JdbcTemplate {
 
     INSERT("""
-            INSERT INTO "spb-metro-check".kkt (
+            INSERT INTO "spb-metro-check".total (
                 date_local,
                 data
             ) values (
-                ${IN.date_local::NUMBER},
+                ${IN.date_local::VARCHAR}::timestamp,
                 ${IN.data::VARCHAR}::json
             );
             """, StatementType.SELECT_WITH_AUTO_COMMIT);

@@ -75,6 +75,9 @@ CREATE TABLE IF NOT EXISTS "spb-metro-check".total
     id bigserial NOT NULL,
     date_add timestamp without time zone NOT NULL DEFAULT (now())::timestamp without time zone,
     date_local timestamp without time zone,
+    group_key character varying(255) NOT NULL,
+    group_count character varying(255) NOT NULL,
+    group_stat character varying(255) NOT NULL,
     data json NOT NULL,
     PRIMARY KEY (id)
 );
