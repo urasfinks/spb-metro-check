@@ -10,11 +10,17 @@ public enum Total implements JdbcTemplate {
             SELECT
             	group_key,
             	group_title,
-            	sum(t1.group_count)
-            FROM "spb-metro-check".total t1
+            	sum(group_count)
+            FROM "spb-metro-check".total
             WHERE date_local between ${IN.date_start::VARCHAR}::timestamp and ${IN.date_end::VARCHAR}::timestamp
             GROUP BY group_key, group_title
             ORDER BY group_key, group_title
+            """, StatementType.SELECT_WITH_AUTO_COMMIT),
+
+    REMOVE("""
+            DELETE
+            FROM "spb-metro-check".total
+            WHERE date_local = ${IN.date_local::VARCHAR}::timestamp
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     INSERT("""

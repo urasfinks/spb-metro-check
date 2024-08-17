@@ -17,8 +17,10 @@ import ru.jamsys.jt.Orange;
 import ru.jamsys.jt.TPP;
 import ru.jamsys.jt.Total;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 @Component
@@ -57,16 +59,29 @@ public class SaveTotal implements PromiseGenerator, HttpHandler {
                             .append("kkt", p.getRepositoryMap("kkt", List.class));
 
                     String date = input.getHttpRequestReader().getMap().getOrDefault("docDate", "-");
+                    AtomicLong money = new AtomicLong();
                     append.forEach((key, value) -> {
                         @SuppressWarnings("unchecked")
                         List<Map<String, Object>> list = (List<Map<String, Object>>) value;
-                        list.forEach(stringObjectMap -> jdbcRequest
-                                .addArg("date_local", date)
-                                .addArg("group_key", key)
-                                .addArg("group_title", stringObjectMap.get("title"))
-                                .addArg("group_count", stringObjectMap.get("count"))
-                                .nextBatch());
+                        list.forEach(stringObjectMap -> {
+                            jdbcRequest
+                                    .addArg("date_local", date)
+                                    .addArg("group_key", key)
+                                    .addArg("group_title", stringObjectMap.get("title"))
+                                    .addArg("group_count", stringObjectMap.get("count"))
+                                    .nextBatch();
+                            if (stringObjectMap.get("title").equals("Приход")) {
+                                money.set(Long.parseLong(stringObjectMap.get("count") + ""));
+                            }
+                        });
                     });
+
+                    jdbcRequest
+                            .addArg("date_local", date)
+                            .addArg("group_key", "orange")
+                            .addArg("group_title", "money")
+                            .addArg("group_count", new BigDecimal(money.get()).multiply(new BigDecimal("0.1")))
+                            .nextBatch();
                     jdbcResource.execute(jdbcRequest);
                 });
     }

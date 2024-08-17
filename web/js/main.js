@@ -149,6 +149,15 @@ window.total_save = function (obj) {
     window.do('/SaveTotal?docDate=' + total_date, obj);
 }
 
+window.total_remove = function (obj) {
+    var total_date = document.getElementById('total_date_remove').value;
+    if (total_date == undefined || total_date.trim() == "") {
+        alert("Не задана дата");
+        return;
+    }
+    window.do('/RemoveTotal?docDate=' + total_date, obj);
+}
+
 window.total_get = function () {
     var total_date_start = document.getElementById('total_date_start').value;
     if (total_date_start == undefined || total_date_start.trim() == "") {
