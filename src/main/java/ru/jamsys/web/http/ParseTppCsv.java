@@ -138,8 +138,6 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                     .addArg("code", json.get("code"))
                     .addArg("gate", Util.padLeft((String) json.get("f35"), 3, "0"))
                     .addArg("f54", json.get("f54"))
-                    .addArg("data", "{}")
-                    //.addArg("data", UtilJson.toStringPretty(json, "{}"))
                     .nextBatch();
 
         } catch (Throwable th) {
@@ -149,7 +147,7 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
 
     @Override
     public Promise generate() {
-        return servicePromise.get(index, 700_000L)
+        return servicePromise.get(index, 1_200_000L)
                 .thenWithResource("selectStation", JdbcResource.class, "default", (_, promise, jdbcResource) -> {
                     JdbcRequest jdbcRequest = new JdbcRequest(Station.SELECT);
                     List<Map<String, Object>> execute = jdbcResource.execute(jdbcRequest);

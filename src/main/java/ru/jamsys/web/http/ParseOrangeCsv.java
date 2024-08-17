@@ -97,14 +97,12 @@ public class ParseOrangeCsv implements PromiseGenerator, HttpHandler {
                 .addArg("code", complexCode.substring(0,3))
                 .addArg("gate", complexCode.substring(3))
                 .addArg("f24", json.get("f24"))
-                .addArg("data", "{}")
-                //.addArg("data", UtilJson.toStringPretty(json, "{}"))
                 .nextBatch();
     }
 
     @Override
     public Promise generate() {
-        return servicePromise.get(index, 700_000L)
+        return servicePromise.get(index, 1200000L)
                 .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, promise, jdbcResource) -> {
                     HttpAsyncResponse input = promise.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
                     SpbMetroCheckApplication.onRead(

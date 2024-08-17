@@ -45,7 +45,7 @@ public class ParseStationCsv implements PromiseGenerator, HttpHandler {
 
     @Override
     public Promise generate() {
-        return servicePromise.get(index, 700_000L)
+        return servicePromise.get(index, 1_200_000L)
                 .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, _, jdbcResource)
                         -> SpbMetroCheckApplication.onRead(
                         SpbMetroCheckApplication.getCSVReader("web/station-2.csv", 2),

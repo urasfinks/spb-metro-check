@@ -81,7 +81,7 @@ function load() {
             document.getElementById(ar[i]).innerHTML = "0";
         }
         for (var key in data) {
-            if (key === "orange-2") {
+            if (key === "orange-agg") {
                 continue;
             }
             for (var i = 0; i < data[key].length; i++) {
@@ -89,7 +89,7 @@ function load() {
                 document.getElementById(id).innerHTML = data[key][i].count;
             }
         }
-        if (data["orange-2"] != undefined) {
+        if (data["orange-agg"] != undefined) {
             var str = "";
             for (var i = 0; i < data[key].length; i++) {
                 str += "<div>" + data[key][i].title + ": " + data[key][i].count + "</div>";
@@ -140,13 +140,27 @@ window.do = function (url, obj) {
     });
 }
 
-window.blank_total = function () {
+window.total_save = function (obj) {
     var total_date = document.getElementById('total_date').value;
     if (total_date == undefined || total_date.trim() == "") {
         alert("Не задана дата");
         return;
     }
-    window.blank('/SaveTotal?docDate=' + total_date);
+    window.do('/SaveTotal?docDate=' + total_date, obj);
+}
+
+window.total_get = function () {
+    var total_date_start = document.getElementById('total_date_start').value;
+    if (total_date_start == undefined || total_date_start.trim() == "") {
+        alert("Не задана дата начала");
+        return;
+    }
+    var total_date_end = document.getElementById('total_date_end').value;
+    if (total_date_end == undefined || total_date_end.trim() == "") {
+        alert("Не задана дата конца");
+        return;
+    }
+    window.blank('/CsvTotal?docDateStart=' + total_date_start + '&docDateEnd=' + total_date_end);
 }
 
 window.blank_correction = function () {

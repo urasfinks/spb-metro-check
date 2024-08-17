@@ -42,7 +42,7 @@ public class CsvCorrection implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
 
-        return servicePromise.get(index, 700_000L)
+        return servicePromise.get(index, 60_000L)
                 .thenWithResource("selectStation", JdbcResource.class, "default", (_, promise, jdbcResource) -> {
                     JdbcRequest jdbcRequest = new JdbcRequest(Station.SELECT);
                     List<Map<String, Object>> execute = jdbcResource.execute(jdbcRequest);

@@ -42,7 +42,7 @@ public class CsvNotTpp implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
 
-        return servicePromise.get(index, 700_000L)
+        return servicePromise.get(index, 60_000L)
                 .thenWithResource("loadFromDb", JdbcResource.class, "default", (_, p, jdbcResource) -> {
                     JdbcRequest jdbcRequest = new JdbcRequest(Orange.PROCESSED);
                     jdbcRequest.addArg("processed", List.of("not_tpp"));

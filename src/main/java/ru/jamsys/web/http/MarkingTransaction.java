@@ -29,7 +29,7 @@ public class MarkingTransaction implements PromiseGenerator, HttpHandler {
 
     @Override
     public Promise generate() {
-        Promise promise = servicePromise.get(index, 700_000L);
+        Promise promise = servicePromise.get(index, 1_200_000L);
         return promise
                 .thenWithResource("tppCancel", JdbcResource.class, "default", (_, _, jdbcResource)
                         -> jdbcResource.execute(new JdbcRequest(TPP.CANCEL)))

@@ -58,8 +58,13 @@
                 </button>-->
 
                 <div class="label">Сводная</div>
-                <button class="extraButton" onclick="window.blank_total()">Сохранить сводную за дату: &nbsp;&nbsp;
+                <button class="extraButton" onclick="window.total_save(this)">Сохранить&nbsp;&nbsp;
                     <input type="date" id="total_date" name="trip-start" style="font-size: 10px;" onclick="event.stopPropagation()"/>
+                </button>
+
+                <button class="extraButton" onclick="window.total_get()">Получить&nbsp;&nbsp;
+                    <input type="date" id="total_date_start" name="trip-start" style="font-size: 10px;" onclick="event.stopPropagation()"/>
+                    <input type="date" id="total_date_end" name="trip-start" style="font-size: 10px;" onclick="event.stopPropagation()"/>
                 </button>
             </div>
         </td>

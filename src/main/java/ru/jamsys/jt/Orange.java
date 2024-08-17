@@ -57,16 +57,14 @@ public enum Orange implements JdbcTemplate {
                 summa,
                 code,
                 gate,
-                f24,
-                data
+                f24
             ) values (
                 ${IN.date_local::TIMESTAMP},
                 ${IN.id_transaction::VARCHAR},
                 ${IN.summa::NUMBER},
                 ${IN.code::VARCHAR},
                 ${IN.gate::VARCHAR},
-                ${IN.f24::VARCHAR},
-                ${IN.data::VARCHAR}::json
+                ${IN.f24::VARCHAR}
             );
             """, StatementType.SELECT_WITH_AUTO_COMMIT);
 

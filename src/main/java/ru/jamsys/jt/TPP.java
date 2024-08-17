@@ -86,8 +86,7 @@ public enum TPP implements JdbcTemplate {
                 summa,
                 code,
                 gate,
-                f54,
-                data
+                f54
             ) values (
                 ${IN.date_local::TIMESTAMP},
                 ${IN.date_fn::TIMESTAMP},
@@ -96,8 +95,7 @@ public enum TPP implements JdbcTemplate {
                 ${IN.summa::NUMBER},
                 ${IN.code::VARCHAR},
                 ${IN.gate::VARCHAR},
-                ${IN.f54::VARCHAR},
-                ${IN.data::VARCHAR}::json
+                ${IN.f54::VARCHAR}
             );
             """, StatementType.SELECT_WITH_AUTO_COMMIT);
 

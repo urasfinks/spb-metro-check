@@ -13,7 +13,7 @@ import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
 import ru.jamsys.core.resource.jdbc.JdbcResource;
 import ru.jamsys.core.web.http.HttpHandler;
-import ru.jamsys.jt.KKT;
+import ru.jamsys.jt.Total;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 @Component
 @RequestMapping
-public class CsvDiffKkt implements PromiseGenerator, HttpHandler {
+public class CsvTotal implements PromiseGenerator, HttpHandler {
 
     @Getter
     @Setter
@@ -35,7 +35,7 @@ public class CsvDiffKkt implements PromiseGenerator, HttpHandler {
 
     private final ServicePromise servicePromise;
 
-    public CsvDiffKkt(ServicePromise servicePromise) {
+    public CsvTotal(ServicePromise servicePromise) {
         this.servicePromise = servicePromise;
     }
 
@@ -44,7 +44,13 @@ public class CsvDiffKkt implements PromiseGenerator, HttpHandler {
 
         return servicePromise.get(index, 60_000L)
                 .thenWithResource("loadFromDb", JdbcResource.class, "default", (_, p, jdbcResource) -> {
-                    JdbcRequest jdbcRequest = new JdbcRequest(KKT.STATISTIC_DIFF);
+                    HttpAsyncResponse input = p.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
+                    String dateStart = input.getHttpRequestReader().getMap().getOrDefault("docDateStart", "-");
+                    String dateEnd = input.getHttpRequestReader().getMap().getOrDefault("docDateEnd", "-");
+                    JdbcRequest jdbcRequest = new JdbcRequest(Total.TOTAL);
+                    jdbcRequest
+                            .addArg("date_start", dateStart)
+                            .addArg("date_end", dateEnd);
                     p.setMapRepository("result", jdbcResource.execute(jdbcRequest));
                 })
                 .then("generateCsv", (_, promise) -> {
@@ -56,7 +62,7 @@ public class CsvDiffKkt implements PromiseGenerator, HttpHandler {
                     HttpServletResponse response = input.getResponse();
 
                     response.setContentType("text/csv");
-                    response.addHeader("Content-Disposition", "attachment;filename=" + getUniqueFileName("diff_kkt"));
+                    response.addHeader("Content-Disposition", "attachment;filename=" + getUniqueFileName("total"));
 
                     CSVWriter csvWriter = new CSVWriter(response.getWriter());
                     AtomicInteger counter = new AtomicInteger(0);

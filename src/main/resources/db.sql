@@ -14,7 +14,6 @@ CREATE TABLE IF NOT EXISTS "spb-metro-check".tpp
     f54 character varying(255) NOT NULL,
     processed character varying(255),
     date_processed timestamp without time zone,
-    data json NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -39,7 +38,6 @@ CREATE TABLE IF NOT EXISTS "spb-metro-check".orange
     f24 character varying(255) NOT NULL,
     processed character varying(255),
     date_processed timestamp without time zone,
-    data json NOT NULL,
     PRIMARY KEY (id)
 );
 
@@ -76,8 +74,7 @@ CREATE TABLE IF NOT EXISTS "spb-metro-check".total
     date_add timestamp without time zone NOT NULL DEFAULT (now())::timestamp without time zone,
     date_local timestamp without time zone,
     group_key character varying(255) NOT NULL,
-    group_count character varying(255) NOT NULL,
-    group_stat character varying(255) NOT NULL,
-    data json NOT NULL,
+    group_title character varying(255) NOT NULL,
+    group_count numeric,
     PRIMARY KEY (id)
 );
