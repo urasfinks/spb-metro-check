@@ -127,22 +127,23 @@ public class CsvCorrection implements PromiseGenerator, HttpHandler {
 
     public String[] getLine(Map<String, Object> row, AtomicInteger counter, String dateCorrection, int numDoc, Map<String, String> station) {
         String complexCode = "" + row.get("code") + row.get("gate");
+        String summa = String.format("%.2f", row.get("summa")).replace(",", ".").replace(".00", "");
         return new String[]{
                 counter.incrementAndGet() + "",
                 "1",
                 "0",
                 dateCorrection,
                 numDoc + "",
-                String.format("%.2f", row.get("summa")),
+                summa,
                 "",
-                String.format("%.2f", row.get("summa")),
-                "",
-                "",
+                summa,
                 "",
                 "",
                 "",
                 "",
-                String.format("%.2f", row.get("summa")),
+                "",
+                "",
+                summa,
                 "",
                 "",
                 "0",
