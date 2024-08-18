@@ -79,7 +79,7 @@ public class CsvCorrection implements PromiseGenerator, HttpHandler {
                         result.forEach(stringObjectMap -> csvWriter.writeNext(getLine(
                                 stringObjectMap,
                                 counter,
-                                input.getHttpRequestReader().getMap().getOrDefault("docDate", "-")+"'T'00:00:00",
+                                input.getHttpRequestReader().getMap().getOrDefault("docDate", "-")+"T00:00:00",
                                 Integer.parseInt(docNumber),
                                 station
                         )));
@@ -100,7 +100,29 @@ public class CsvCorrection implements PromiseGenerator, HttpHandler {
     }
 
     public String[] getLineFirstLine() {
-        return new String[]{"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
+        return new String[]{
+                "id\nОбязательное поле\nИдентификатор документа\nСтрока от 1 до 64 символов",
+                "type\nОбязательное поле\nПризнак расчета, 1054: \n1. Приход \n3. Расход ",
+                "correctionType\nОбязательное поле\nТип коррекции 1173:\n0. Самостоятельно \n1. По предписанию",
+                "causeDocumentDate\nОбязательное поле\nВремя в виде строки в формате ISO8601\nДата документа основания для коррекции 1178. \nВ данном реквизите время всегда указывать, как 00:00:00",
+                "causeDocumentNumber\nОбязательное поле\nСтрока от 1 до 32 символов\nНомер документа основания для коррекции, 1179",
+                "totalSum\nОбязательное поле\nСумма расчета, указанного в чеке (БСО), 1020\nДесятичное число с точностью до 2\nсимволов после точки",
+                "cashSum\nСумма по чеку (БСО) наличными, 1031\nДесятичное число с точностью до 2\nсимволов после точки",
+                "eCashSum\nСумма по чеку (БСО) безналичными, 1081\nДесятичное число с точностью до 2\nсимволов после точки",
+                "prepaymentSum\nСумма по чеку (БСО) предоплатой (зачетом аванса и (или) предыдущих платежей), 1215\nДесятичное число с точностью до 2\nсимволов после точки",
+                "postpaymentSum\nСумма по чеку (БСО) постоплатой (в кредит), 1216\nДесятичное число с точностью до 2\nсимволов после точки",
+                "otherPaymentTypeSum\nСумма по чеку (БСО) встречным предоставлением, 1217\nДесятичное число с точностью до 2\nсимволов после точки",
+                "tax1Sum\nСумма НДС чека по ставке 20%, 1102\nДесятичное число с точностью до 2\nсимволов после точки",
+                "tax2Sum\nСумма НДС чека по ставке 10%, 1103\nДесятичное число с точностью до 2\nсимволов после точки",
+                "tax3Sum\nСумма расчета по чеку с НДС по ставке 0%, 1104\nДесятичное число с точностью до 2\nсимволов после точки",
+                "tax4Sum\nСумма расчета по чеку без НДС, 1105\nДесятичное число с точностью до 2\nсимволов после точки",
+                "tax5Sum\nСумма НДС чека по расч. ставке 20/120, 1106\nДесятичное число с точностью до 2\nсимволов после точки",
+                "tax6Sum\nСумма НДС чека по расч. ставке 10/110, 1107\nДесятичное число с точностью до 2\nсимволов после точки",
+                "taxationSystem\nПрименяемая система налогообложения, 1055: \n0. Общая \n1. Упрощенная доход \n2. Упрощенная доход минус расход \n3. Единый налог на вмененный доход \n4. Единый сельскохозяйственный налог \n5. Патентная система налогообложения",
+                "automatNumber\nОбязательное поле\nНомер автомата, 1036\nСтрока длиной от 1 до 20 символов",
+                "settlementAddress\nОбязательное поле\nАдрес расчетов, 1009 \nСтрока длиной от 1 до 243 символов",
+                "settlementPlace\nОбязательное поле\nМесто расчетов, 1187\nСтрока длиной от 1 до 243 символов"
+        };
     }
 
     public String[] getLine(Map<String, Object> row, AtomicInteger counter, String dateCorrection, int numDoc, Map<String, String> station) {
@@ -111,6 +133,8 @@ public class CsvCorrection implements PromiseGenerator, HttpHandler {
                 "0",
                 dateCorrection,
                 numDoc + "",
+                String.format("%.2f", row.get("summa")),
+                "",
                 String.format("%.2f", row.get("summa")),
                 "",
                 "",
@@ -124,8 +148,7 @@ public class CsvCorrection implements PromiseGenerator, HttpHandler {
                 "0",
                 complexCode,
                 "Россия, город Москва, Алтуфьевское шоссе, д.33Г",
-                station.get(row.get("code")) + complexCode,
-                ""
+                station.get(row.get("code")) + complexCode
         };
     }
 
