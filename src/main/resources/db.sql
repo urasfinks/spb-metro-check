@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS "spb-metro-check".tpp
     date_fn timestamp without time zone,
     status character varying(255) COLLATE pg_catalog."default",
     id_transaction character varying(255) COLLATE pg_catalog."default",
+    id_transaction_orange character varying(255) COLLATE pg_catalog."default",
     summa numeric,
     code character varying(255) NOT NULL,
     gate character varying(255) NOT NULL,
@@ -19,9 +20,14 @@ CREATE TABLE IF NOT EXISTS "spb-metro-check".tpp
 
 -- DROP INDEX IF EXISTS "spb-metro-check".idx_01;
 
-CREATE UNIQUE INDEX IF NOT EXISTS tpp_idx_01
+CREATE INDEX IF NOT EXISTS tpp_idx_01
     ON "spb-metro-check".tpp USING btree
     (id_transaction COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+CREATE INDEX IF NOT EXISTS tpp_idx_02
+    ON "spb-metro-check".tpp USING btree
+    (id_transaction_orange COLLATE pg_catalog."default" ASC NULLS LAST)
     TABLESPACE pg_default;
 
 -- DROP TABLE IF EXISTS "spb-metro-check".orange;

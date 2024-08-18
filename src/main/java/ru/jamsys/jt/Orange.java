@@ -12,7 +12,7 @@ public enum Orange implements JdbcTemplate {
             WHERE id IN (
             	SELECT o1.id FROM "spb-metro-check".orange o1
             	LEFT JOIN "spb-metro-check".tpp t1
-            	    ON (t1.id_transaction || '-INCOME') = o1.id_transaction
+            	    ON t1.id_transaction_orange = o1.id_transaction
             	WHERE o1.processed IS NULL
             	AND t1.id_transaction IS NULL
             )

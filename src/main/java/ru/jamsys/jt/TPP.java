@@ -26,7 +26,7 @@ public enum TPP implements JdbcTemplate {
             WHERE id IN (
             	SELECT t1.id FROM "spb-metro-check".tpp t1
             	LEFT JOIN "spb-metro-check".orange o1
-            	    ON (t1.id_transaction || '-INCOME') = o1.id_transaction
+            	    ON t1.id_transaction_orange = o1.id_transaction
             	WHERE t1.processed is NULL
             	AND o1.id_transaction IS NULL
             )
@@ -83,6 +83,7 @@ public enum TPP implements JdbcTemplate {
                 date_fn,
                 status,
                 id_transaction,
+                id_transaction_orange,
                 summa,
                 code,
                 gate,
@@ -92,6 +93,7 @@ public enum TPP implements JdbcTemplate {
                 ${IN.date_fn::TIMESTAMP},
                 ${IN.status::VARCHAR},
                 ${IN.id_transaction::VARCHAR},
+                ${IN.id_transaction_orange::VARCHAR},
                 ${IN.summa::NUMBER},
                 ${IN.code::VARCHAR},
                 ${IN.gate::VARCHAR},

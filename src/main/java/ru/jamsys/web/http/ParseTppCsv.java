@@ -134,6 +134,7 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                     .addArg("date_fn", dateFnMs)
                     .addArg("status", json.get("f29"))
                     .addArg("id_transaction", json.get("f48"))
+                    .addArg("id_transaction_orange", json.get("f49"))
                     .addArg("summa", json.get("f22"))
                     .addArg("code", json.get("code"))
                     .addArg("gate", Util.padLeft((String) json.get("f35"), 3, "0"))
