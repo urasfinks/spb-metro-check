@@ -1,10 +1,10 @@
 package ru.jamsys.jt;
 
+import ru.jamsys.core.flat.template.jdbc.JdbcRequestRepository;
 import ru.jamsys.core.flat.template.jdbc.JdbcTemplate;
 import ru.jamsys.core.flat.template.jdbc.StatementType;
-import ru.jamsys.core.flat.template.jdbc.TemplateJdbc;
 
-public enum Total implements JdbcTemplate {
+public enum Total implements JdbcRequestRepository {
 
     TOTAL("""
             SELECT
@@ -37,14 +37,14 @@ public enum Total implements JdbcTemplate {
             );
             """, StatementType.SELECT_WITH_AUTO_COMMIT);
 
-    private final TemplateJdbc template;
+    private final JdbcTemplate template;
 
     Total(String sql, StatementType statementType) {
-        template = new TemplateJdbc(sql, statementType);
+        template = new JdbcTemplate(sql, statementType);
     }
 
     @Override
-    public TemplateJdbc getTemplate() {
+    public JdbcTemplate getJdbcTemplate() {
         return template;
     }
 

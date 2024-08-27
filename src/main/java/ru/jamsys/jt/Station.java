@@ -1,10 +1,10 @@
 package ru.jamsys.jt;
 
+import ru.jamsys.core.flat.template.jdbc.JdbcRequestRepository;
 import ru.jamsys.core.flat.template.jdbc.JdbcTemplate;
 import ru.jamsys.core.flat.template.jdbc.StatementType;
-import ru.jamsys.core.flat.template.jdbc.TemplateJdbc;
 
-public enum Station implements JdbcTemplate {
+public enum Station implements JdbcRequestRepository {
 
     SELECT("""
             SELECT * FROM "spb-metro-check".station
@@ -21,14 +21,14 @@ public enum Station implements JdbcTemplate {
             );
             """, StatementType.SELECT_WITH_AUTO_COMMIT);
 
-    private final TemplateJdbc template;
+    private final JdbcTemplate template;
 
     Station(String sql, StatementType statementType) {
-        template = new TemplateJdbc(sql, statementType);
+        template = new JdbcTemplate(sql, statementType);
     }
 
     @Override
-    public TemplateJdbc getTemplate() {
+    public JdbcTemplate getJdbcTemplate() {
         return template;
     }
 }
