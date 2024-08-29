@@ -7,7 +7,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.jamsys.core.component.ServicePromise;
-import ru.jamsys.core.extension.http.HttpAsyncResponse;
+import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
@@ -49,12 +49,12 @@ public class CsvRefund implements PromiseGenerator, HttpHandler {
                     Map<String, String> station = new HashMap<>();
                     execute.forEach(stringObjectMap
                             -> station.put((String) stringObjectMap.get("code"), (String) stringObjectMap.get("place")));
-                    promise.setMapRepository("station", station);
+                    promise.setRepositoryMap("station", station);
                 })
                 .thenWithResource("loadFromDb", JdbcResource.class, "default", (_, p, jdbcResource) -> {
                     JdbcRequest jdbcRequest = new JdbcRequest(TPP.PROCESSED);
                     jdbcRequest.addArg("processed", List.of("fn_future"));
-                    p.setMapRepository("result", jdbcResource.execute(jdbcRequest));
+                    p.setRepositoryMap("result", jdbcResource.execute(jdbcRequest));
                 })
                 .then("generateCsv", (_, promise) -> {
 
@@ -64,8 +64,8 @@ public class CsvRefund implements PromiseGenerator, HttpHandler {
                     @SuppressWarnings("unchecked")
                     Map<String, String> station = promise.getRepositoryMap("station", Map.class);
 
-                    HttpAsyncResponse input = promise.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
-                    HttpServletResponse response = input.getResponse();
+                    ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
+                    HttpServletResponse response = servletHandler.getResponse();
 
                     response.setContentType("text/csv");
                     response.addHeader("Content-Disposition", "attachment;filename=" + getUniqueFileName("refund"));

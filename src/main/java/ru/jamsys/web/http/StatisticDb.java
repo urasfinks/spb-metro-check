@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.builder.HashMapBuilder;
-import ru.jamsys.core.extension.http.HttpAsyncResponse;
+import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
@@ -36,19 +36,18 @@ public class StatisticDb implements PromiseGenerator, HttpHandler {
     public Promise generate() {
         return servicePromise.get(index, 10_000L)
                 .thenWithResource("loadTppStatistic", JdbcResource.class, "default", (_, p, jdbcResource)
-                        -> p.setMapRepository("tpp", jdbcResource.execute(new JdbcRequest(TPP.STATISTIC))))
+                        -> p.setRepositoryMap("tpp", jdbcResource.execute(new JdbcRequest(TPP.STATISTIC))))
                 .thenWithResource("loadOrangeStatistic", JdbcResource.class, "default", (_, p, jdbcResource)
-                        -> p.setMapRepository("orange", jdbcResource.execute(new JdbcRequest(Orange.STATISTIC))))
+                        -> p.setRepositoryMap("orange", jdbcResource.execute(new JdbcRequest(Orange.STATISTIC))))
                 .thenWithResource("loadOrangeStatistic", JdbcResource.class, "default", (_, p, jdbcResource)
-                        -> p.setMapRepository("orange-agg", jdbcResource.execute(new JdbcRequest(Orange.STATISTIC_2))))
+                        -> p.setRepositoryMap("orange-agg", jdbcResource.execute(new JdbcRequest(Orange.STATISTIC_2))))
                 .onComplete((_, p) -> {
-                    HttpAsyncResponse ar = p.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
-                    ar.setBodyFromMap(new HashMapBuilder<>()
+                    ServletHandler servletHandler = p.getRepositoryMapClass(ServletHandler.class);
+                    servletHandler.setResponseBodyFromMap(new HashMapBuilder<>()
                             .append("tpp", p.getRepositoryMap("tpp", List.class))
                             .append("orange", p.getRepositoryMap("orange", List.class))
-                            .append("orange-agg", p.getRepositoryMap("orange-agg", List.class))
-                    );
-                    ar.complete();
+                            .append("orange-agg", p.getRepositoryMap("orange-agg", List.class)));
+                    servletHandler.responseComplete();
                 });
     }
 

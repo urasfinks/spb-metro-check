@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.builder.HashMapBuilder;
-import ru.jamsys.core.extension.http.HttpAsyncResponse;
+import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
@@ -41,16 +41,16 @@ public class SaveTotal implements PromiseGenerator, HttpHandler {
     public Promise generate() {
         return servicePromise.get(index, 10_000L)
                 .thenWithResource("loadTppStatistic", JdbcResource.class, "default", (_, p, jdbcResource)
-                        -> p.setMapRepository("tpp", jdbcResource.execute(new JdbcRequest(TPP.STATISTIC))))
+                        -> p.setRepositoryMap("tpp", jdbcResource.execute(new JdbcRequest(TPP.STATISTIC))))
                 .thenWithResource("loadOrangeStatistic", JdbcResource.class, "default", (_, p, jdbcResource)
-                        -> p.setMapRepository("orange", jdbcResource.execute(new JdbcRequest(Orange.STATISTIC))))
+                        -> p.setRepositoryMap("orange", jdbcResource.execute(new JdbcRequest(Orange.STATISTIC))))
                 .thenWithResource("loadOrangeStatistic", JdbcResource.class, "default", (_, p, jdbcResource)
-                        -> p.setMapRepository("orange-agg", jdbcResource.execute(new JdbcRequest(Orange.STATISTIC_2))))
+                        -> p.setRepositoryMap("orange-agg", jdbcResource.execute(new JdbcRequest(Orange.STATISTIC_2))))
                 .thenWithResource("loadTppStatistic", JdbcResource.class, "default", (_, p, jdbcResource)
-                        -> p.setMapRepository("kkt", jdbcResource.execute(new JdbcRequest(KKT.STATISTIC))))
+                        -> p.setRepositoryMap("kkt", jdbcResource.execute(new JdbcRequest(KKT.STATISTIC))))
                 .thenWithResource("loadTppStatistic", JdbcResource.class, "default", (_, p, jdbcResource)
                         -> {
-                    HttpAsyncResponse input = p.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
+                    ServletHandler servletHandler = p.getRepositoryMapClass(ServletHandler.class);
                     JdbcRequest jdbcRequest = new JdbcRequest(Total.INSERT);
                     HashMapBuilder<Object, Object> append = new HashMapBuilder<>()
                             .append("tpp", p.getRepositoryMap("tpp", List.class))
@@ -58,7 +58,7 @@ public class SaveTotal implements PromiseGenerator, HttpHandler {
                             .append("orange-agg", p.getRepositoryMap("orange-agg", List.class))
                             .append("kkt", p.getRepositoryMap("kkt", List.class));
 
-                    String date = input.getHttpRequestReader().getMap().getOrDefault("docDate", "-");
+                    String date = servletHandler.getRequestReader().getMap().getOrDefault("docDate", "-");
                     AtomicLong money = new AtomicLong();
                     append.forEach((key, value) -> {
                         @SuppressWarnings("unchecked")

@@ -7,7 +7,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.jamsys.core.component.ServicePromise;
-import ru.jamsys.core.extension.http.HttpAsyncResponse;
+import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
@@ -45,15 +45,15 @@ public class CsvDiffKkt implements PromiseGenerator, HttpHandler {
         return servicePromise.get(index, 60_000L)
                 .thenWithResource("loadFromDb", JdbcResource.class, "default", (_, p, jdbcResource) -> {
                     JdbcRequest jdbcRequest = new JdbcRequest(KKT.STATISTIC_DIFF);
-                    p.setMapRepository("result", jdbcResource.execute(jdbcRequest));
+                    p.setRepositoryMap("result", jdbcResource.execute(jdbcRequest));
                 })
                 .then("generateCsv", (_, promise) -> {
 
                     @SuppressWarnings("unchecked")
                     List<Map<String, Object>> result = promise.getRepositoryMap("result", List.class);
 
-                    HttpAsyncResponse input = promise.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
-                    HttpServletResponse response = input.getResponse();
+                    ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
+                    HttpServletResponse response = servletHandler.getResponse();
 
                     response.setContentType("text/csv");
                     response.addHeader("Content-Disposition", "attachment;filename=" + getUniqueFileName("diff_kkt"));

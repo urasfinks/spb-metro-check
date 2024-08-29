@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.builder.HashMapBuilder;
-import ru.jamsys.core.extension.http.HttpAsyncResponse;
+import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
@@ -35,13 +35,13 @@ public class StatisticKkt implements PromiseGenerator, HttpHandler {
     public Promise generate() {
         return servicePromise.get(index, 10_000L)
                 .thenWithResource("loadTppStatistic", JdbcResource.class, "default", (_, p, jdbcResource)
-                        -> p.setMapRepository("kkt", jdbcResource.execute(new JdbcRequest(KKT.STATISTIC))))
+                        -> p.setRepositoryMap("kkt", jdbcResource.execute(new JdbcRequest(KKT.STATISTIC))))
                 .onComplete((_, p) -> {
-                    HttpAsyncResponse ar = p.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
-                    ar.setBodyFromMap(new HashMapBuilder<>()
+                    ServletHandler ar = p.getRepositoryMapClass(ServletHandler.class);
+                    ar.setResponseBodyFromMap(new HashMapBuilder<>()
                             .append("kkt", p.getRepositoryMap("kkt", List.class))
                     );
-                    ar.complete();
+                    ar.responseComplete();
                 });
     }
 

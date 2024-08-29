@@ -5,7 +5,7 @@ import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.jamsys.core.component.ServicePromise;
-import ru.jamsys.core.extension.http.HttpAsyncResponse;
+import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
@@ -33,9 +33,9 @@ public class RemoveTotal implements PromiseGenerator, HttpHandler {
         return servicePromise.get(index, 10_000L)
                 .thenWithResource("loadTppStatistic", JdbcResource.class, "default", (_, p, jdbcResource)
                         -> {
-                    HttpAsyncResponse input = p.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
+                    ServletHandler servletHandler = p.getRepositoryMapClass(ServletHandler.class);
                     JdbcRequest jdbcRequest = new JdbcRequest(Total.REMOVE);
-                    String date = input.getHttpRequestReader().getMap().getOrDefault("docDate", "-");
+                    String date = servletHandler.getRequestReader().getMap().getOrDefault("docDate", "-");
                     jdbcRequest.addArg("date_local", date);
                     jdbcResource.execute(jdbcRequest);
                 });

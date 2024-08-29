@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import ru.jamsys.SpbMetroCheckApplication;
 import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.exception.ForwardException;
-import ru.jamsys.core.extension.http.HttpAsyncResponse;
+import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.flat.util.Util;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
@@ -155,14 +155,14 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                     Map<String, String> station = new HashMap<>();
                     execute.forEach(stringObjectMap
                             -> station.put((String) stringObjectMap.get("code"), (String) stringObjectMap.get("place")));
-                    promise.setMapRepository("station", station);
+                    promise.setRepositoryMap("station", station);
                 })
                 .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, promise, jdbcResource) -> {
                     @SuppressWarnings("unchecked")
                     Map<String, String> station = promise.getRepositoryMap("station", Map.class);
-                    HttpAsyncResponse input = promise.getRepositoryMap("HttpAsyncResponse", HttpAsyncResponse.class);
+                    ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
                     SpbMetroCheckApplication.onRead(
-                            SpbMetroCheckApplication.getCSVReader(input.getHttpRequestReader().getMultiPartFormData("file"), 1),
+                            SpbMetroCheckApplication.getCSVReader(servletHandler.getRequestReader().getMultiPartFormData("file"), 1),
                             isThreadRun, 5000, listJson -> {
                                 JdbcRequest jdbcRequest = new JdbcRequest(TPP.INSERT);
                                 listJson.forEach(json -> addToRequest(json, jdbcRequest, station));

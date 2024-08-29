@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import ru.jamsys.core.App;
 import ru.jamsys.core.component.SecurityComponent;
-import ru.jamsys.core.extension.http.HttpAsyncResponse;
-import ru.jamsys.core.extension.http.HttpRequestReader;
+import ru.jamsys.core.extension.http.ServletHandler;
+import ru.jamsys.core.extension.http.ServletRequestReader;
 import ru.jamsys.core.web.http.HttpInterceptor;
 
 @Component
@@ -23,7 +23,7 @@ public class Auth implements HttpInterceptor {
     @Override
     public boolean handle(HttpServletRequest request, HttpServletResponse response) {
         try {
-            HttpRequestReader.basicAuthHandler(request.getHeader("Authorization"), (user, password) -> {
+            ServletRequestReader.basicAuthHandler(request.getHeader("Authorization"), (user, password) -> {
                 String cred = new String(securityComponent.get("web.password." + user));
                 if (!cred.equals(password)) {
                     throw new RuntimeException("Incorrect password");
@@ -31,7 +31,7 @@ public class Auth implements HttpInterceptor {
             });
         } catch (Throwable th) {
             App.error(th);
-            HttpAsyncResponse.setUnauthorized(response);
+            ServletHandler.setResponseUnauthorized(response);
             return false;
         }
         return true;
