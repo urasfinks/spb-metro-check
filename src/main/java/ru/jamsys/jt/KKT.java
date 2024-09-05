@@ -26,6 +26,7 @@ public enum KKT implements JdbcRequestRepository {
                OR count_agg_orange <> count_agg
                OR summa_agg IS NULL
                OR count_agg IS NULL
+            LIMIT 5000
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     STATISTIC("""

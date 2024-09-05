@@ -53,12 +53,11 @@ public class CsvDiffKkt implements PromiseGenerator, HttpHandler {
                     List<Map<String, Object>> result = promise.getRepositoryMap("result", List.class);
 
                     ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
-                    HttpServletResponse response = servletHandler.getResponse();
 
-                    response.setContentType("text/csv");
-                    response.addHeader("Content-Disposition", "attachment;filename=" + getUniqueFileName("diff_kkt"));
+                    servletHandler.setResponseHeader("Content-Type", "text/csv");
+                    servletHandler.setResponseHeader("Content-Disposition", "attachment;filename=" + getUniqueFileName("diff_kkt"));
 
-                    CSVWriter csvWriter = new CSVWriter(response.getWriter());
+                    CSVWriter csvWriter = new CSVWriter(servletHandler.getResponseWriter());
                     AtomicInteger counter = new AtomicInteger(0);
                     if (!result.isEmpty()) {
                         String[] firstLineField = getLineCorrectionFirstLine(result.getFirst());

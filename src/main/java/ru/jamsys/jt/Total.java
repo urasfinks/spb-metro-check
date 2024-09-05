@@ -15,6 +15,7 @@ public enum Total implements JdbcRequestRepository {
             WHERE date_local between ${IN.date_start::VARCHAR}::timestamp and ${IN.date_end::VARCHAR}::timestamp
             GROUP BY group_key, group_title
             ORDER BY group_key, group_title
+            LIMIT 5000
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     REMOVE("""

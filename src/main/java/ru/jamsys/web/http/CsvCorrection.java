@@ -65,12 +65,11 @@ public class CsvCorrection implements PromiseGenerator, HttpHandler {
                     Map<String, String> station = promise.getRepositoryMap("station", Map.class);
 
                     ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
-                    HttpServletResponse response = servletHandler.getResponse();
 
-                    response.setContentType("text/csv");
-                    response.addHeader("Content-Disposition", "attachment;filename=" + getUniqueFileName("correction"));
+                    servletHandler.setResponseHeader("Content-Type", "text/csv");
+                    servletHandler.setResponseHeader("Content-Disposition", "attachment;filename=" + getUniqueFileName("correction"));
 
-                    CSVWriter csvWriter = new CSVWriter(response.getWriter());
+                    CSVWriter csvWriter = new CSVWriter(servletHandler.getResponseWriter());
                     AtomicInteger counter = new AtomicInteger(0);
 
                     if (!result.isEmpty()) {

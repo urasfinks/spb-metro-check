@@ -55,6 +55,7 @@ public enum TPP implements JdbcRequestRepository {
             SELECT * FROM "spb-metro-check".tpp
             WHERE processed IN (${IN.processed::IN_ENUM_VARCHAR})
             ORDER BY date_local
+            LIMIT 5000
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     FILL_CONTINUE("""
