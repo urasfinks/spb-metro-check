@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.jamsys.SpbMetroCheckApplication;
 import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.promise.Promise;
@@ -18,12 +19,10 @@ import java.io.Writer;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
 @Component
 @RequestMapping
@@ -65,16 +64,19 @@ public class CsvDiffKkt implements PromiseGenerator, HttpHandler {
                         byte[] bs = {(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
                         responseWriter.write(new String(bs));
 
-                        String[] firstLineField = getLineCorrectionFirstLine(result.getFirst());
-                        csvWriter.writeNext(firstLineField);
-                        result.forEach(stringObjectMap -> csvWriter.writeNext(getLineCorrection(
+                        String[] fLine = SpbMetroCheckApplication.getLineCorrectionFirstLine(result.getFirst());
+                        csvWriter.writeNext(SpbMetroCheckApplication.headerReplace(fLine));
+                        result.forEach(stringObjectMap -> csvWriter.writeNext(SpbMetroCheckApplication.getLineCorrection(
                                 stringObjectMap,
                                 counter,
-                                firstLineField
+                                fLine
                         )));
                     }
                     csvWriter.flush();
                     csvWriter.close();
+                })
+                .onComplete((_, promise) -> {
+                    promise.getRepositoryMapClass(ServletHandler.class).getCompletableFuture().complete(null);
                 });
     }
 
@@ -85,23 +87,6 @@ public class CsvDiffKkt implements PromiseGenerator, HttpHandler {
     public String getDate() {
         SimpleDateFormat dtf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss-SSS");
         return dtf.format(new Date());
-    }
-
-    public String[] getLineCorrectionFirstLine(Map<String, Object> row) {
-        String[] array = row.keySet().toArray(new String[0]);
-        return Stream.concat(Arrays.stream(new String[]{""}), Arrays.stream(array)).toArray(String[]::new);
-    }
-
-    public String[] getLineCorrection(Map<String, Object> row, AtomicInteger counter, String[] fields) {
-        String[] result = new String[row.size() + 1];
-        for (int i = 0; i < fields.length; i++) {
-            if (i == 0) {
-                result[i] = counter.incrementAndGet() + "";
-            } else {
-                result[i] = String.valueOf(row.get(fields[i]));
-            }
-        }
-        return result;
     }
 
 }

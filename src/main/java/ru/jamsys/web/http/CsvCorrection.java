@@ -90,6 +90,9 @@ public class CsvCorrection implements PromiseGenerator, HttpHandler {
 
                     csvWriter.flush();
                     csvWriter.close();
+                })
+                .onComplete((_, promise) -> {
+                    promise.getRepositoryMapClass(ServletHandler.class).getCompletableFuture().complete(null);
                 });
     }
 
