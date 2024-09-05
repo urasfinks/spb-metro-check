@@ -15,6 +15,7 @@ import ru.jamsys.core.resource.jdbc.JdbcResource;
 import ru.jamsys.core.web.http.HttpHandler;
 import ru.jamsys.jt.TPP;
 
+import java.io.Writer;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -58,9 +59,14 @@ public class CsvNotOrange implements PromiseGenerator, HttpHandler {
                     servletHandler.setResponseHeader("Content-Type", "text/csv");
                     servletHandler.setResponseHeader("Content-Disposition", "attachment;filename=" + getUniqueFileName("not_orange"));
 
-                    CSVWriter csvWriter = new CSVWriter(servletHandler.getResponseWriter());
+                    Writer responseWriter = servletHandler.getResponseWriter();
+                    CSVWriter csvWriter = new CSVWriter(responseWriter, ';', '"', '"', "\n");
                     AtomicInteger counter = new AtomicInteger(0);
+
                     if (!result.isEmpty()) {
+                        byte[] bs = {(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
+                        responseWriter.write(new String(bs));
+
                         String[] fLine = getLineCorrectionFirstLine(result.getFirst());
                         csvWriter.writeNext(fLine);
                         result.forEach(stringObjectMap -> csvWriter.writeNext(getLineCorrection(
