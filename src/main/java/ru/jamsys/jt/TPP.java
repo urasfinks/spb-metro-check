@@ -13,6 +13,14 @@ public enum TPP implements JdbcRequestRepository {
             AND status = 'Не подлежит оплате'
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
+    ACCEPTED_0("""
+            UPDATE "spb-metro-check".tpp
+            SET processed = 'accepted_tpp', date_processed = now()::timestamp
+            WHERE processed is NULL
+            AND status = 'Принято в обработку в ТПП'
+            AND date_fn is null
+            """, StatementType.SELECT_WITH_AUTO_COMMIT),
+
     ACCEPTED("""
             UPDATE "spb-metro-check".tpp
             SET processed = 'accepted_tpp', date_processed = now()::timestamp

@@ -34,6 +34,8 @@ public class MarkingTransaction implements PromiseGenerator, HttpHandler {
                 .thenWithResource("tppCancel", JdbcResource.class, "default", (_, _, jdbcResource)
                         -> jdbcResource.execute(new JdbcRequest(TPP.CANCEL)))
                 .thenWithResource("tppAccepted", JdbcResource.class, "default", (_, _, jdbcResource)
+                        -> jdbcResource.execute(new JdbcRequest(TPP.ACCEPTED_0)))
+                .thenWithResource("tppAccepted", JdbcResource.class, "default", (_, _, jdbcResource)
                         -> jdbcResource.execute(new JdbcRequest(TPP.ACCEPTED)))
                 .thenWithResource("tppNotOrange", JdbcResource.class, "default", (_, _, jdbcResource)
                         -> jdbcResource.execute(new JdbcRequest(TPP.NOT_ORANGE)))
