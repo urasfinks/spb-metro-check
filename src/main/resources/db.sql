@@ -34,8 +34,7 @@ CREATE INDEX IF NOT EXISTS tpp_idx_02
 
 CREATE INDEX IF NOT EXISTS tpp_idx_03
     ON "spb-metro-check".tpp USING btree
-    (date_fof COLLATE pg_catalog."default" ASC NULLS LAST)
-    TABLESPACE pg_default;
+    (date_fof ASC NULLS LAST);
 
 -- DROP TABLE IF EXISTS "spb-metro-check".orange;
 
@@ -62,10 +61,9 @@ CREATE UNIQUE INDEX IF NOT EXISTS orange_idx_01
     (id_transaction COLLATE pg_catalog."default" ASC NULLS LAST)
     TABLESPACE pg_default;
 
-CREATE UNIQUE INDEX IF NOT EXISTS orange_idx_02
+CREATE INDEX IF NOT EXISTS orange_idx_02
     ON "spb-metro-check".orange USING btree
-    (date_fof COLLATE pg_catalog."default" ASC NULLS LAST)
-    TABLESPACE pg_default;
+    (date_fof ASC NULLS LAST);
 
 CREATE TABLE "spb-metro-check".station
 (
@@ -88,10 +86,9 @@ CREATE TABLE IF NOT EXISTS "spb-metro-check".kkt
     PRIMARY KEY (id)
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS kkt_idx_01
+CREATE INDEX IF NOT EXISTS kkt_idx_01
     ON "spb-metro-check".kkt USING btree
-    (date_fof COLLATE pg_catalog."default" ASC NULLS LAST)
-    TABLESPACE pg_default;
+    (date_fof ASC NULLS LAST);
 
 CREATE TABLE IF NOT EXISTS "spb-metro-check".total
 (
@@ -104,7 +101,6 @@ CREATE TABLE IF NOT EXISTS "spb-metro-check".total
     PRIMARY KEY (id)
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS total_idx_01
+CREATE INDEX IF NOT EXISTS total_idx_01
     ON "spb-metro-check".total USING btree
-    (date_fof COLLATE pg_catalog."default" ASC NULLS LAST)
-    TABLESPACE pg_default;
+    (date_fof ASC NULLS LAST);
