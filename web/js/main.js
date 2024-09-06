@@ -82,7 +82,7 @@ function ajax(url, callback) {
 
 function load() {
     window.getDate(function (dateStart, dateEnd) {
-        ajax("/StatisticDb?dateStart=" + dateStart + "&" + "dateEnd=" + dateEnd, function (data) {
+        ajax("/StatisticDb?date_start=" + dateStart + "&" + "date_end=" + dateEnd, function (data) {
             if (data.exception == true) {
                 alert(JSON.stringify(data));
                 return;

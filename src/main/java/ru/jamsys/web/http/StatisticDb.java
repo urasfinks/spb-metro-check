@@ -16,6 +16,7 @@ import ru.jamsys.jt.Orange;
 import ru.jamsys.jt.TPP;
 
 import java.util.List;
+import java.util.Map;
 
 
 @Component
@@ -35,12 +36,31 @@ public class StatisticDb implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 10_000L)
-                .thenWithResource("loadTppStatistic", JdbcResource.class, "default", (_, p, jdbcResource)
-                        -> p.setRepositoryMap("tpp", jdbcResource.execute(new JdbcRequest(TPP.STATISTIC))))
-                .thenWithResource("loadOrangeStatistic", JdbcResource.class, "default", (_, p, jdbcResource)
-                        -> p.setRepositoryMap("orange", jdbcResource.execute(new JdbcRequest(Orange.STATISTIC))))
-                .thenWithResource("loadOrangeStatistic", JdbcResource.class, "default", (_, p, jdbcResource)
-                        -> p.setRepositoryMap("orange-agg", jdbcResource.execute(new JdbcRequest(Orange.STATISTIC_2))))
+                .thenWithResource("loadTppStatistic", JdbcResource.class, "default", (_, promise, jdbcResource) -> {
+                            ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
+                            List<Map<String, Object>> execute = jdbcResource.execute(
+                                    new JdbcRequest(TPP.STATISTIC)
+                                            .addArg((Map) servletHandler.getRequestReader().getMap())
+                            );
+                            promise.setRepositoryMap("tpp", execute);
+                        }
+                )
+                .thenWithResource("loadOrangeStatistic", JdbcResource.class, "default", (_, promise, jdbcResource) -> {
+                            ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
+                            promise.setRepositoryMap("orange", jdbcResource.execute(
+                                    new JdbcRequest(Orange.STATISTIC)
+                                            .addArg((Map) servletHandler.getRequestReader().getMap())
+                            ));
+                        }
+                )
+                .thenWithResource("loadOrangeStatistic", JdbcResource.class, "default", (_, promise, jdbcResource) -> {
+                            ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
+                            promise.setRepositoryMap("orange-agg", jdbcResource.execute(
+                                    new JdbcRequest(Orange.STATISTIC_2)
+                                            .addArg((Map) servletHandler.getRequestReader().getMap())
+                            ));
+                        }
+                )
                 .onComplete((_, p) -> {
                     ServletHandler servletHandler = p.getRepositoryMapClass(ServletHandler.class);
                     servletHandler.setResponseBodyFromMap(new HashMapBuilder<>()

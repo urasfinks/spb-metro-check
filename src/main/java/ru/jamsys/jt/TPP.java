@@ -77,8 +77,11 @@ public enum TPP implements JdbcRequestRepository {
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     STATISTIC("""
-            SELECT processed as title, count(*) FROM "spb-metro-check".tpp
-            WHERE date_fof between ${IN.date_start::VARCHAR}::timestamp and ${IN.date_end::VARCHAR}::timestamp
+            SELECT
+                processed as title,
+                count(*)
+            FROM "spb-metro-check".tpp
+            WHERE date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             GROUP BY processed
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
