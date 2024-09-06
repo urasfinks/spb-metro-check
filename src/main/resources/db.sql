@@ -1,8 +1,10 @@
 -- DROP TABLE IF EXISTS "spb-metro-check".tpp;
+--fof (frame of reference) система отсчёта
 
 CREATE TABLE IF NOT EXISTS "spb-metro-check".tpp
 (
     id bigserial NOT NULL,
+    date_fof timestamp without time zone NOT NULL,
     date_add timestamp without time zone NOT NULL DEFAULT (now())::timestamp without time zone,
     date_local timestamp without time zone,
     date_fn timestamp without time zone,
@@ -30,11 +32,17 @@ CREATE INDEX IF NOT EXISTS tpp_idx_02
     (id_transaction_orange COLLATE pg_catalog."default" ASC NULLS LAST)
     TABLESPACE pg_default;
 
+CREATE INDEX IF NOT EXISTS tpp_idx_03
+    ON "spb-metro-check".tpp USING btree
+    (date_fof COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
 -- DROP TABLE IF EXISTS "spb-metro-check".orange;
 
 CREATE TABLE IF NOT EXISTS "spb-metro-check".orange
 (
     id bigserial NOT NULL,
+    date_fof timestamp without time zone NOT NULL,
     date_add timestamp without time zone NOT NULL DEFAULT (now())::timestamp without time zone,
     date_local timestamp without time zone,
     id_transaction character varying(255) COLLATE pg_catalog."default",
@@ -54,6 +62,11 @@ CREATE UNIQUE INDEX IF NOT EXISTS orange_idx_01
     (id_transaction COLLATE pg_catalog."default" ASC NULLS LAST)
     TABLESPACE pg_default;
 
+CREATE UNIQUE INDEX IF NOT EXISTS orange_idx_02
+    ON "spb-metro-check".orange USING btree
+    (date_fof COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
 CREATE TABLE "spb-metro-check".station
 (
     id bigserial NOT NULL,
@@ -65,6 +78,7 @@ CREATE TABLE "spb-metro-check".station
 CREATE TABLE IF NOT EXISTS "spb-metro-check".kkt
 (
     id bigserial NOT NULL,
+    date_fof timestamp without time zone NOT NULL,
     date_add timestamp without time zone NOT NULL DEFAULT (now())::timestamp without time zone,
     summa numeric,
     code character varying(255) NOT NULL,
@@ -74,13 +88,23 @@ CREATE TABLE IF NOT EXISTS "spb-metro-check".kkt
     PRIMARY KEY (id)
 );
 
+CREATE UNIQUE INDEX IF NOT EXISTS kkt_idx_01
+    ON "spb-metro-check".kkt USING btree
+    (date_fof COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
 CREATE TABLE IF NOT EXISTS "spb-metro-check".total
 (
     id bigserial NOT NULL,
     date_add timestamp without time zone NOT NULL DEFAULT (now())::timestamp without time zone,
-    date_local timestamp without time zone,
+    date_fof timestamp without time zone,
     group_key character varying(255) NOT NULL,
     group_title character varying(255) NOT NULL,
     group_count numeric,
     PRIMARY KEY (id)
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS total_idx_01
+    ON "spb-metro-check".total USING btree
+    (date_fof COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
