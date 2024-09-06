@@ -18,6 +18,7 @@ import ru.jamsys.jt.Station;
 import ru.jamsys.jt.TPP;
 
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,7 +169,10 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                     ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
                     Map<String, String> name = servletHandler.getRequestReader().getMultiPartFormSubmittedFileName();
                     if (name.get("file").endsWith(".zip")) {
-                        ZipInputStream zis = new ZipInputStream(servletHandler.getRequestReader().getMultiPartFormData("file"));
+                        ZipInputStream zis = new ZipInputStream(
+                                servletHandler.getRequestReader().getMultiPartFormData("file"),
+                                Charset.forName("Cp1251")
+                        );
                         ZipEntry zipEntry;
                         while ((zipEntry = zis.getNextEntry()) != null) {
                             if (zipEntry.getName().endsWith(".csv")) {

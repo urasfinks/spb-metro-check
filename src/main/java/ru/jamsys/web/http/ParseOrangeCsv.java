@@ -17,6 +17,7 @@ import ru.jamsys.core.web.http.HttpHandler;
 import ru.jamsys.jt.Orange;
 
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -111,7 +112,10 @@ public class ParseOrangeCsv implements PromiseGenerator, HttpHandler {
                     ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
                     Map<String, String> name = servletHandler.getRequestReader().getMultiPartFormSubmittedFileName();
                     if (name.get("file").endsWith(".zip")) {
-                        ZipInputStream zis = new ZipInputStream(servletHandler.getRequestReader().getMultiPartFormData("file"));
+                        ZipInputStream zis = new ZipInputStream(
+                                servletHandler.getRequestReader().getMultiPartFormData("file"),
+                                Charset.forName("Cp1251")
+                        );
                         ZipEntry zipEntry;
                         while ((zipEntry = zis.getNextEntry()) != null) {
                             if (zipEntry.getName().endsWith(".csv")) {
