@@ -126,8 +126,8 @@ public class SpbMetroCheckApplication {
                 .append("summa", "Сумма")
                 .append("code", "Код станции")
                 .append("gate", "Проходка")
-                .append("count_agg", "Кол-во транзакций в ККТ")
-                .append("summa_agg", "Сумма в ККТ")
+                .append("count_agg", "Сводное кол-во транзакций в ККТ")
+                .append("summa_agg", "Сводная сумма в ККТ")
                 .append("date_local", "Локальная дата")
                 .append("id_transaction", "Идентификатор транзакции")
                 .append("f24", "Тип операции")
@@ -142,10 +142,15 @@ public class SpbMetroCheckApplication {
                 .append("id_transaction_orange", "Идентификатор транзакции в orange")
                 .append("f54", "Фискальный признак документа")
                 .append("complex_code_orange", "Код проходки в Orange")
-                .append("count_agg_orange", "Кол-во транзакций в Orange")
+                .append("count_agg_orange", "Сводное кол-во транзакций в Orange")
                 .append("summa_orange", "Сумма в Orange")
-                .append("summa_agg_orange", "Сумма в Orange")
+                .append("summa_agg_orange", "Сводная сумма в Orange")
                 .append("date_add", "Дата добавления записи");
+
+        if (List.of(fLine).contains("f24")) {
+            map.put("date_local", "Дата формирования фискальных документов");
+        }
+
         for(String key: fLine){
             newList.add(map.getOrDefault(key, key));
         }
