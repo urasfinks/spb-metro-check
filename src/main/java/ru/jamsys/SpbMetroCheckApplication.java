@@ -145,6 +145,7 @@ public class SpbMetroCheckApplication {
                 .append("count_agg_orange", "Сводное кол-во транзакций в Orange")
                 .append("summa_orange", "Сумма в Orange")
                 .append("summa_agg_orange", "Сводная сумма в Orange")
+                .append("date_fof", "Дата системы отсчёта")
                 .append("date_add", "Дата добавления записи");
 
         if (List.of(fLine).contains("f24")) {
