@@ -78,6 +78,7 @@ public enum TPP implements JdbcRequestRepository {
 
     STATISTIC("""
             SELECT processed as title, count(*) FROM "spb-metro-check".tpp
+            WHERE date_fof between ${IN.date_start::VARCHAR}::timestamp and ${IN.date_end::VARCHAR}::timestamp
             GROUP BY processed
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
