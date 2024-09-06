@@ -92,6 +92,7 @@ public enum TPP implements JdbcRequestRepository {
 
     INSERT("""
             INSERT INTO "spb-metro-check".tpp (
+                date_fof,
                 date_local,
                 date_fn,
                 status,
@@ -102,6 +103,7 @@ public enum TPP implements JdbcRequestRepository {
                 gate,
                 f54
             ) values (
+                ${IN.date_fof::VARCHAR}::date,
                 ${IN.date_local::TIMESTAMP},
                 ${IN.date_fn::TIMESTAMP},
                 ${IN.status::VARCHAR},

@@ -211,6 +211,13 @@ window.blank = function (url) {
     anchor.click();
 }
 
+window.submitUpload = function (obj) {
+    window.getOnceDate(function (dateStart) {
+        $$("date_start").value = dateStart;
+        obj.submit();
+    });
+}
+
 onReady(function () {
     $$('all_date_start').value = new Date().toISOString().substring(0, 10);
     $$('all_date_end').value = new Date().toISOString().substring(0, 10);

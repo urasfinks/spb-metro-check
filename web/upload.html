@@ -121,8 +121,9 @@
                                 <option value="/ParseOrangeCsv">Orange</option>
                                 <option value="/ParseKKTCsv">ККТ</option>
                             </select>
+                            <input type="text" id="date_start" name="date_start">
                             &nbsp;&nbsp;
-                            <input type="submit" value="Загрузить" class="extraButton orange-bg">
+                            <input type="submit" onclick="event.stopPropagation();window.submitUpload(this);" value="Загрузить" class="extraButton orange-bg">
                         </td>
                     </tr>
                 </table>

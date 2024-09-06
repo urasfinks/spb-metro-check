@@ -6,9 +6,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.jamsys.SpbMetroCheckApplication;
 import ru.jamsys.core.component.ServicePromise;
+import ru.jamsys.core.extension.builder.HashMapBuilder;
 import ru.jamsys.core.extension.exception.ForwardException;
 import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.flat.util.Util;
+import ru.jamsys.core.flat.util.UtilJson;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
@@ -114,7 +116,7 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
         this.servicePromise = servicePromise;
     }
 
-    private void addToRequest(Map<String, Object> json, JdbcRequest jdbcRequest, Map<String, String> station) {
+    private void addToRequest(Promise promise, Map<String, Object> json, JdbcRequest jdbcRequest, Map<String, String> station) {
         try {
             String dateLocalString = json.get("f0") + " " + json.get("f1");
             Long dateLocalMs = Util.getTimestamp(dateLocalString, "d.M.y H:m:s") * 1000;
@@ -132,19 +134,23 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                     break;
                 }
             }
-
+            ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
+            Map<String, String> map = servletHandler.getRequestReader().getMap();
             //System.out.println(UtilJson.toStringPretty(json, "{}"));
-            jdbcRequest
-                    .addArg("date_local", dateLocalMs)
-                    .addArg("date_fn", dateFnMs)
-                    .addArg("status", json.get("f29"))
-                    .addArg("id_transaction", json.get("f48"))
-                    .addArg("id_transaction_orange", json.get("f49"))
-                    .addArg("summa", json.get("f22"))
-                    .addArg("code", json.get("code"))
-                    .addArg("gate", Util.padLeft((String) json.get("f35"), 3, "0"))
-                    .addArg("f54", json.get("f54"))
-                    .nextBatch();
+            HashMapBuilder<String, Object> append = new HashMapBuilder<String, Object>()
+                    .append("date_fof", map.get("date_start"))
+                    .append("date_local", dateLocalMs)
+                    .append("date_fn", dateFnMs)
+                    .append("status", json.get("f29"))
+                    .append("id_transaction", json.get("f48"))
+                    .append("id_transaction_orange", json.get("f49"))
+                    .append("summa", json.get("f22"))
+                    .append("code", json.get("code"))
+                    .append("gate", Util.padLeft((String) json.get("f35"), 3, "0"))
+                    .append("f54", json.get("f54"));
+            //System.out.println(UtilJson.toStringPretty(append, "{}"));
+            jdbcRequest.addArg(append);
+            jdbcRequest.nextBatch();
 
         } catch (Throwable th) {
             throw new ForwardException(th);
@@ -177,6 +183,7 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                         while ((zipEntry = zis.getNextEntry()) != null) {
                             if (zipEntry.getName().endsWith(".csv")) {
                                 doAction(
+                                        promise,
                                         isThreadRun,
                                         jdbcResource,
                                         station,
@@ -190,6 +197,7 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                         zis.close();
                     } else {
                         doAction(
+                                promise,
                                 isThreadRun,
                                 jdbcResource,
                                 station,
@@ -200,6 +208,7 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
     }
 
     public void doAction(
+            Promise promise,
             AtomicBoolean isThreadRun,
             JdbcResource jdbcResource,
             Map<String, String> station,
@@ -209,7 +218,7 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                 SpbMetroCheckApplication.getCSVReader(is, 1),
                 isThreadRun, 5000, listJson -> {
                     JdbcRequest jdbcRequest = new JdbcRequest(TPP.INSERT);
-                    listJson.forEach(json -> addToRequest(json, jdbcRequest, station));
+                    listJson.forEach(json -> addToRequest(promise, json, jdbcRequest, station));
                     Util.logConsole("insert");
                     jdbcResource.execute(jdbcRequest);
                 });
