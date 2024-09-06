@@ -144,6 +144,7 @@ public class SpbMetroCheckApplication {
                 .append("complex_code_orange", "Код проходки в Orange")
                 .append("count_agg_orange", "Кол-во транзакций в Orange")
                 .append("summa_orange", "Сумма в Orange")
+                .append("summa_agg_orange", "Сумма в Orange")
                 .append("date_add", "Дата добавления записи");
         for(String key: fLine){
             newList.add(map.getOrDefault(key, key));
