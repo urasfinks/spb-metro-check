@@ -6,11 +6,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.jamsys.SpbMetroCheckApplication;
 import ru.jamsys.core.component.ServicePromise;
-import ru.jamsys.core.extension.builder.HashMapBuilder;
 import ru.jamsys.core.extension.exception.ForwardException;
 import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.flat.util.Util;
-import ru.jamsys.core.flat.util.UtilJson;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
@@ -136,21 +134,18 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
             }
             ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
             Map<String, String> map = servletHandler.getRequestReader().getMap();
-            //System.out.println(UtilJson.toStringPretty(json, "{}"));
-            HashMapBuilder<String, Object> append = new HashMapBuilder<String, Object>()
-                    .append("date_fof", map.get("date_start"))
-                    .append("date_local", dateLocalMs)
-                    .append("date_fn", dateFnMs)
-                    .append("status", json.get("f29"))
-                    .append("id_transaction", json.get("f48"))
-                    .append("id_transaction_orange", json.get("f49"))
-                    .append("summa", json.get("f22"))
-                    .append("code", json.get("code"))
-                    .append("gate", Util.padLeft((String) json.get("f35"), 3, "0"))
-                    .append("f54", json.get("f54"));
-            //System.out.println(UtilJson.toStringPretty(append, "{}"));
-            jdbcRequest.addArg(append);
-            jdbcRequest.nextBatch();
+            jdbcRequest
+                    .addArg("date_fof", map.get("date_start"))
+                    .addArg("date_local", dateLocalMs)
+                    .addArg("date_fn", dateFnMs)
+                    .addArg("status", json.get("f29"))
+                    .addArg("id_transaction", json.get("f48"))
+                    .addArg("id_transaction_orange", json.get("f49"))
+                    .addArg("summa", json.get("f22"))
+                    .addArg("code", json.get("code"))
+                    .addArg("gate", Util.padLeft((String) json.get("f35"), 3, "0"))
+                    .addArg("f54", json.get("f54"))
+                    .nextBatch();
 
         } catch (Throwable th) {
             throw new ForwardException(th);
