@@ -2,6 +2,30 @@ window.$$ = function (id) {
     return document.getElementById(id);
 }
 
+window.getOnceDate = function (callback) {
+    getDate(function (dateStart, dateEnd) {
+        if (dateStart != dateEnd) {
+            alert("Для этой операции надо, что бы дата начала была равна дате конца");
+            return;
+        }
+        callback(dateStart);
+    });
+}
+
+window.getDate = function (callback) {
+    var dateStart = $$('all_date_start').value;
+    if (dateStart == undefined || dateStart.trim() == "") {
+        alert("Не задана дата начала");
+        return;
+    }
+    var dateEnd = $$('all_date_end').value;
+    if (dateEnd == undefined || dateEnd.trim() == "") {
+        alert("Не задана дата конца");
+        return;
+    }
+    callback(dateStart, dateEnd);
+}
+
 window.selectedItem = {};
 
 window.onChangeCheckBox = function (obj) {
@@ -56,50 +80,46 @@ function ajax(url, callback) {
     xmlhttp.send();
 }
 
-setInterval(function () {
-    load();
-}, 5000);
-
 function load() {
-    ajax("/StatisticDb", function (data) {
-        if (data.exception == true) {
-            alert(JSON.stringify(data));
-            return;
-        }
-        var ar = [
-            "tpp-",
-            "orange-",
-            "tpp-accepted_tpp",
-            "tpp-not_orange",
-            "tpp-fn_future",
-            "tpp-cancel",
-            "tpp-checked",
-            "orange-not_tpp",
-            "orange-checked"
-        ];
-        for (var i = 0; i < ar.length; i++) {
-            document.getElementById(ar[i]).innerHTML = "0";
-        }
-        for (var key in data) {
-            if (key === "orange-agg") {
-                continue;
+    window.getDate(function (dateStart, dateEnd) {
+        ajax("/StatisticDb?dateStart=" + dateStart + "&" + "dateEnd=" + dateEnd, function (data) {
+            if (data.exception == true) {
+                alert(JSON.stringify(data));
+                return;
             }
-            for (var i = 0; i < data[key].length; i++) {
-                var id = key + "-" + (data[key][i].title == null ? "" : data[key][i].title);
-                document.getElementById(id).innerHTML = data[key][i].count;
+            var ar = [
+                "tpp-",
+                "orange-",
+                "tpp-accepted_tpp",
+                "tpp-not_orange",
+                "tpp-fn_future",
+                "tpp-cancel",
+                "tpp-checked",
+                "orange-not_tpp",
+                "orange-checked"
+            ];
+            for (var i = 0; i < ar.length; i++) {
+                document.getElementById(ar[i]).innerHTML = "0";
             }
-        }
-        if (data["orange-agg"] != undefined) {
-            var str = "";
-            for (var i = 0; i < data[key].length; i++) {
-                str += "<div>" + data[key][i].title + ": " + data[key][i].count + "</div>";
+            for (var key in data) {
+                if (key === "orange-agg") {
+                    continue;
+                }
+                for (var i = 0; i < data[key].length; i++) {
+                    var id = key + "-" + (data[key][i].title == null ? "" : data[key][i].title);
+                    document.getElementById(id).innerHTML = data[key][i].count;
+                }
             }
-            $$("orange_group").innerHTML = str;
-        }
+            if (data["orange-agg"] != undefined) {
+                var str = "";
+                for (var i = 0; i < data[key].length; i++) {
+                    str += "<div>" + data[key][i].title + ": " + data[key][i].count + "</div>";
+                }
+                $$("orange_group").innerHTML = str;
+            }
+        });
     });
 }
-
-load();
 
 function load_kkt(obj) {
     obj.classList.toggle('button--loading');
@@ -125,8 +145,6 @@ function load_kkt(obj) {
         }
     });
 }
-
-load_kkt($$("load_kkt"));
 
 window.do = function (url, obj) {
     obj.classList.toggle('button--loading');
@@ -192,3 +210,13 @@ window.blank = function (url) {
     anchor.target = "_blank";
     anchor.click();
 }
+
+onReady(function () {
+    $$('all_date_start').value = new Date().toISOString().substring(0, 10);
+    $$('all_date_end').value = new Date().toISOString().substring(0, 10);
+    setInterval(function () {
+        load();
+    }, 5000);
+    load_kkt($$("load_kkt"));
+    load();
+})

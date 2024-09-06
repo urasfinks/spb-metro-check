@@ -4,6 +4,7 @@
     <link rel="shortcut icon" href="/favicon.ico">
     <link href="css/loader.css" rel="stylesheet"/>
     <link href="css/main.css" rel="stylesheet"/>
+    <script type="text/javascript" src="/js/on-ready.js"></script>
 </head>
 
 
@@ -58,22 +59,19 @@
                 </button>-->
 
                 <div class="label">Сводная</div>
-                <button class="extraButton" onclick="window.total_save(this)">Сохранить&nbsp;&nbsp;
-                    <input type="date" id="total_date" name="trip-start" style="font-size: 10px;" onclick="event.stopPropagation()"/>
-                </button>
+                <button class="extraButton" onclick="window.total_save(this)">Сохранить</button>
 
-                <button class="extraButton" onclick="window.total_get()">Получить&nbsp;&nbsp;
-                    <input type="date" id="total_date_start" name="trip-start" style="font-size: 10px;" onclick="event.stopPropagation()"/>
-                    <input type="date" id="total_date_end" name="trip-start" style="font-size: 10px;" onclick="event.stopPropagation()"/>
-                </button>
+                <button class="extraButton" onclick="window.total_get()">Получить</button>
 
-                <button class="extraButton" onclick="window.total_remove(this)">Удалить&nbsp;&nbsp;
-                    <input type="date" id="total_date_remove" name="trip-start" style="font-size: 10px;" onclick="event.stopPropagation()"/>
-                </button>
+                <button class="extraButton" onclick="window.total_remove(this)">Удалить</button>
             </div>
         </td>
         <td rowspan="2" style="width:250px;line-height: 150%;" valign="top" class="td-round logo">
             <div style="">
+                <div class="label">
+                    <input type="date" id="all_date_start" name="trip-start" style="font-size: 10px;" onclick="event.stopPropagation()"/>
+                    <input type="date" id="all_date_end" name="trip-start" style="font-size: 10px;" onclick="event.stopPropagation()"/>
+                </div>
 
                 <div class="label">ТПП</div>
                 <div>Не обработано: <span id="tpp-"></span></div>
@@ -134,6 +132,6 @@
 </table>
 
 
-<script type="text/javascript" src="js/main.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
 </body>
 </html>
