@@ -12,7 +12,7 @@ public enum Total implements JdbcRequestRepository {
             	group_title,
             	sum(group_count)
             FROM "spb-metro-check".total
-            WHERE date_local between ${IN.date_start::VARCHAR}::timestamp and ${IN.date_end::VARCHAR}::timestamp
+            WHERE date_fof between ${IN.date_start::VARCHAR}::timestamp and ${IN.date_end::VARCHAR}::timestamp
             GROUP BY group_key, group_title
             ORDER BY group_key, group_title
             LIMIT 5000
@@ -21,17 +21,17 @@ public enum Total implements JdbcRequestRepository {
     REMOVE("""
             DELETE
             FROM "spb-metro-check".total
-            WHERE date_local = ${IN.date_local::VARCHAR}::timestamp
+            WHERE date_fof = ${IN.date_fof::VARCHAR}::timestamp
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     INSERT("""
             INSERT INTO "spb-metro-check".total (
-                date_local,
+                date_fof,
                 group_key,
                 group_title,
                 group_count
             ) values (
-                ${IN.date_local::VARCHAR}::timestamp,
+                ${IN.date_fof::VARCHAR}::timestamp,
                 ${IN.group_key::VARCHAR},
                 ${IN.group_title::VARCHAR},
                 ${IN.group_count::NUMBER}

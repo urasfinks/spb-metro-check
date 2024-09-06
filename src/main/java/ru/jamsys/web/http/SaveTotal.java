@@ -65,7 +65,7 @@ public class SaveTotal implements PromiseGenerator, HttpHandler {
                         List<Map<String, Object>> list = (List<Map<String, Object>>) value;
                         list.forEach(stringObjectMap -> {
                             jdbcRequest
-                                    .addArg("date_local", date)
+                                    .addArg("date_fof", date)
                                     .addArg("group_key", key)
                                     .addArg("group_title", stringObjectMap.get("title"))
                                     .addArg("group_count", stringObjectMap.get("count"))
@@ -77,7 +77,7 @@ public class SaveTotal implements PromiseGenerator, HttpHandler {
                     });
 
                     jdbcRequest
-                            .addArg("date_local", date)
+                            .addArg("date_fof", date)
                             .addArg("group_key", "orange")
                             .addArg("group_title", "money")
                             .addArg("group_count", new BigDecimal(money.get()).multiply(new BigDecimal("0.1")))
