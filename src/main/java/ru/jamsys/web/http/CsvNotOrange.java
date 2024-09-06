@@ -44,7 +44,7 @@ public class CsvNotOrange implements PromiseGenerator, HttpHandler {
         return servicePromise.get(index, 60_000L)
                 .thenWithResource("loadFromDb", JdbcResource.class, "default", (_, p, jdbcResource) -> {
                     JdbcRequest jdbcRequest = new JdbcRequest(TPP.PROCESSED);
-                    jdbcRequest.addArg("processed", List.of("not_orange1"));
+                    jdbcRequest.addArg("processed", List.of("not_orange"));
                     p.setRepositoryMap("result", jdbcResource.execute(jdbcRequest));
                 })
                 .then("generateCsv", (_, promise) -> {

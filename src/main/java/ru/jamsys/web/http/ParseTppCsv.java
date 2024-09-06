@@ -17,9 +17,13 @@ import ru.jamsys.core.web.http.HttpHandler;
 import ru.jamsys.jt.Station;
 import ru.jamsys.jt.TPP;
 
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /*
 {
@@ -156,19 +160,54 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                     execute.forEach(stringObjectMap
                             -> station.put((String) stringObjectMap.get("code"), (String) stringObjectMap.get("place")));
                     promise.setRepositoryMap("station", station);
+
                 })
                 .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, promise, jdbcResource) -> {
                     @SuppressWarnings("unchecked")
                     Map<String, String> station = promise.getRepositoryMap("station", Map.class);
                     ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
-                    SpbMetroCheckApplication.onRead(
-                            SpbMetroCheckApplication.getCSVReader(servletHandler.getRequestReader().getMultiPartFormData("file"), 1),
-                            isThreadRun, 5000, listJson -> {
-                                JdbcRequest jdbcRequest = new JdbcRequest(TPP.INSERT);
-                                listJson.forEach(json -> addToRequest(json, jdbcRequest, station));
-                                Util.logConsole("insert");
-                                jdbcResource.execute(jdbcRequest);
-                            });
+                    Map<String, String> name = servletHandler.getRequestReader().getMultiPartFormSubmittedFileName();
+                    if (name.get("file").endsWith(".zip")) {
+                        ZipInputStream zis = new ZipInputStream(servletHandler.getRequestReader().getMultiPartFormData("file"));
+                        ZipEntry zipEntry;
+                        while ((zipEntry = zis.getNextEntry()) != null) {
+                            if (zipEntry.getName().endsWith(".csv")) {
+                                doAction(
+                                        isThreadRun,
+                                        jdbcResource,
+                                        station,
+                                        zis
+                                );
+                                zis.closeEntry();
+                                break;
+                            }
+                            zis.closeEntry();
+                        }
+                        zis.close();
+                    } else {
+                        doAction(
+                                isThreadRun,
+                                jdbcResource,
+                                station,
+                                servletHandler.getRequestReader().getMultiPartFormData("file")
+                        );
+                    }
+                });
+    }
+
+    public void doAction(
+            AtomicBoolean isThreadRun,
+            JdbcResource jdbcResource,
+            Map<String, String> station,
+            InputStream is
+    ) throws Throwable {
+        SpbMetroCheckApplication.onRead(
+                SpbMetroCheckApplication.getCSVReader(is, 1),
+                isThreadRun, 5000, listJson -> {
+                    JdbcRequest jdbcRequest = new JdbcRequest(TPP.INSERT);
+                    listJson.forEach(json -> addToRequest(json, jdbcRequest, station));
+                    Util.logConsole("insert");
+                    jdbcResource.execute(jdbcRequest);
                 });
     }
 

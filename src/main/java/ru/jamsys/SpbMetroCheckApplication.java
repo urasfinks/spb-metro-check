@@ -126,8 +126,8 @@ public class SpbMetroCheckApplication {
                 .append("summa", "Сумма")
                 .append("code", "Код станции")
                 .append("gate", "Проходка")
-                .append("count_agg", "Кол-во в группе")
-                .append("summa_agg", "Сумма в группе")
+                .append("count_agg", "Кол-во транзакций в ККТ")
+                .append("summa_agg", "Сумма в ККТ")
                 .append("date_local", "Локальная дата")
                 .append("id_transaction", "Идентификатор транзакции")
                 .append("f24", "Тип операции")
@@ -141,6 +141,9 @@ public class SpbMetroCheckApplication {
                 .append("status", "Статус")
                 .append("id_transaction_orange", "Идентификатор транзакции в orange")
                 .append("f54", "Фискальный признак документа")
+                .append("complex_code_orange", "Код проходки в Orange")
+                .append("count_agg_orange", "Кол-во транзакций в Orange")
+                .append("summa_orange", "Сумма в Orange")
                 .append("date_add", "Дата добавления записи");
         for(String key: fLine){
             newList.add(map.getOrDefault(key, key));
