@@ -73,7 +73,8 @@ public enum TPP implements JdbcRequestRepository {
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     TRUNCATE("""
-            TRUNCATE "spb-metro-check".tpp
+            DELETE FROM "spb-metro-check".tpp
+            WHERE date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     STATISTIC("""

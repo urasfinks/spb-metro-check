@@ -146,16 +146,19 @@ function load_kkt(obj) {
     });
 }
 
-window.do = function (url, obj) {
-    obj.classList.toggle('button--loading');
-    ajax(url, function (data) {
+window.doRange = function (url, obj) {
+    window.getDate(function (dateStart, dateEnd) {
         obj.classList.toggle('button--loading');
-        if (data.exception == true) {
-            alert(JSON.stringify(data));
-        } else {
-            alert("Ok");
-        }
-    });
+        ajax(url + "?date_start=" + dateStart + "&" + "date_end=" + dateEnd, function (data) {
+            obj.classList.toggle('button--loading');
+            if (data.exception == true) {
+                alert(JSON.stringify(data));
+            } else {
+                alert("Ok");
+            }
+        });
+    })
+
 }
 
 window.total_save = function (obj) {
@@ -211,10 +214,10 @@ window.blank = function (url) {
     anchor.click();
 }
 
-window.submitUpload = function (obj) {
+window.submitUpload = function () {
     window.getOnceDate(function (dateStart) {
         $$("date_start").value = dateStart;
-        obj.submit();
+        $$("form-upload").submit();
     });
 }
 

@@ -29,7 +29,7 @@ public class TruncateKkt implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 10_000L)
-                .appendWithResource("truncate", JdbcResource.class, "default", (_, _, jdbcResource) -> {
+                .thenWithResource("truncate", JdbcResource.class, "default", (_, _, jdbcResource) -> {
                     JdbcRequest jdbcRequest = new JdbcRequest(KKT.TRUNCATE);
                     jdbcResource.execute(jdbcRequest);
                 });

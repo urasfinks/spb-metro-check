@@ -23,19 +23,19 @@
 
                 <div class="label">Операции</div>
 
-                <button type="button" class="button" onclick="window.do('/TruncateTpp', this)">
+                <button type="button" class="button" onclick="window.doRange('/TruncateTpp', this)">
                     <span class="button__text">Очистить ТПП</span>
                 </button>
-                <button type="button" class="button" onclick="window.do('/TruncateOrange', this)">
+                <button type="button" class="button" onclick="window.doRange('/TruncateOrange', this)">
                     <span class="button__text">Очистить Orange</span>
                 </button>
-                <button type="button" class="button" onclick="window.do('/TruncateKkt', this)">
+                <button type="button" class="button" onclick="window.doRange('/TruncateKkt', this)">
                     <span class="button__text">Очистить KKT</span>
                 </button>
-                <button type="button" class="button" onclick="window.do('/MarkingTransaction', this)">
+                <button type="button" class="button" onclick="window.doRange('/MarkingTransaction', this)">
                     <span class="button__text">Обработать транзакции</span>
                 </button>
-                <button type="button" class="button" onclick="window.do('/ClearMark', this)">
+                <button type="button" class="button" onclick="window.doRange('/ClearMark', this)">
                     <span class="button__text">Сбросить обработку</span>
                 </button>
 
@@ -69,8 +69,8 @@
         <td rowspan="2" style="width:250px;line-height: 150%;" valign="top" class="td-round logo">
             <div style="">
                 <div class="label">
-                    <input type="date" id="all_date_start" name="trip-start" style="font-size: 10px;" onclick="event.stopPropagation()"/>
-                    <input type="date" id="all_date_end" name="trip-start" style="font-size: 10px;" onclick="event.stopPropagation()"/>
+                    <input type="date" id="all_date_start" name="trip-start" style="font-size: 10px;" onclick="event.stopPropagation()" onchange="load()"/>
+                    <input type="date" id="all_date_end" name="trip-start" style="font-size: 10px;" onclick="event.stopPropagation()" onchange="load()"/>
                 </div>
 
                 <div class="label">ТПП</div>
@@ -123,7 +123,7 @@
                             </select>
                             <input type="hidden" id="date_start" name="date_start">
                             &nbsp;&nbsp;
-                            <input type="submit" onclick="event.stopPropagation();window.submitUpload(this);" value="Загрузить" class="extraButton orange-bg">
+                            <input type="button" onclick="window.submitUpload();" value="Загрузить" class="extraButton orange-bg">
                         </td>
                     </tr>
                 </table>

@@ -162,17 +162,30 @@ public class SpbMetroCheckApplication {
     }
 
     public static void checkDateFofInRequest(Promise promise) {
+        checkDate(promise, "date_start");
+    }
+
+    public static String checkDate(Promise promise, String key) {
         ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
         Map<String, String> map = servletHandler.getRequestReader().getMap();
-        if (!map.containsKey("date_start")) {
-            throw new RuntimeException("date_start not exist");
+        if (!map.containsKey(key)) {
+            throw new RuntimeException(key + " not exist");
         }
-        String dateStart = map.get("date_start");
-        if (dateStart == null) {
-            throw new RuntimeException("date_start is empty");
+        String date = map.get(key);
+        if (date == null) {
+            throw new RuntimeException(key + " is empty");
         }
-        if (!UtilDate.validate(dateStart, "yyyy-MM-dd")) {
-            throw new RuntimeException("date_start failed validate format: yyyy-MM-dd");
+        if (!UtilDate.validate(date, "yyyy-MM-dd")) {
+            throw new RuntimeException(key + " failed validate format: yyyy-MM-dd");
+        }
+        return date;
+    }
+
+    public static void checkDateRangeRequest(Promise promise) throws Exception {
+        long dateStart = UtilDate.getMs(checkDate(promise, "date_start"), "yyyy-MM-dd");
+        long dateEnd = UtilDate.getMs(checkDate(promise, "date_end"), "yyyy-MM-dd");
+        if (dateEnd < dateStart) {
+            throw new RuntimeException("Конечная дата меньше начальной");
         }
     }
 

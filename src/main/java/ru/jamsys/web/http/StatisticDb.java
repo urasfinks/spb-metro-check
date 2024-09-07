@@ -40,7 +40,7 @@ public class StatisticDb implements PromiseGenerator, HttpHandler {
                             ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
                             List<Map<String, Object>> execute = jdbcResource.execute(
                                     new JdbcRequest(TPP.STATISTIC)
-                                            .addArg((Map) servletHandler.getRequestReader().getMap())
+                                            .addArg(servletHandler.getRequestReader().getMap())
                             );
                             promise.setRepositoryMap("tpp", execute);
                         }
@@ -49,7 +49,7 @@ public class StatisticDb implements PromiseGenerator, HttpHandler {
                             ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
                             promise.setRepositoryMap("orange", jdbcResource.execute(
                                     new JdbcRequest(Orange.STATISTIC)
-                                            .addArg((Map) servletHandler.getRequestReader().getMap())
+                                            .addArg(servletHandler.getRequestReader().getMap())
                             ));
                         }
                 )
@@ -57,7 +57,7 @@ public class StatisticDb implements PromiseGenerator, HttpHandler {
                             ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
                             promise.setRepositoryMap("orange-agg", jdbcResource.execute(
                                     new JdbcRequest(Orange.STATISTIC_2)
-                                            .addArg((Map) servletHandler.getRequestReader().getMap())
+                                            .addArg(servletHandler.getRequestReader().getMap())
                             ));
                         }
                 )
