@@ -31,4 +31,5 @@ public enum Station implements JdbcRequestRepository {
     public JdbcTemplate getJdbcTemplate() {
         return template;
     }
+
 }

@@ -91,4 +91,5 @@ public enum KKT implements JdbcRequestRepository {
     public JdbcTemplate getJdbcTemplate() {
         return template;
     }
+
 }
