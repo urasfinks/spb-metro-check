@@ -75,7 +75,7 @@ public class ParseOrangeCsv implements PromiseGenerator, HttpHandler {
 
     AtomicInteger c = new AtomicInteger(0);
 
-    private void addToRequest(Map<String, Object> json, JdbcRequest jdbcRequest) {
+    private void addToRequest(Promise promise, Map<String, Object> json, JdbcRequest jdbcRequest) {
         int i = c.incrementAndGet();
         json.put("f14", SpbMetroCheckApplication.expoReplace((String) json.get("f14")));
         json.put("f8", SpbMetroCheckApplication.arrayReplace((String) json.get("f8")));
@@ -95,7 +95,10 @@ public class ParseOrangeCsv implements PromiseGenerator, HttpHandler {
 
         String summa = (String) json.get("f10");
 
+        ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
+        Map<String, String> map = servletHandler.getRequestReader().getMap();
         jdbcRequest
+                .addArg("date_fof", map.get("date_start"))
                 .addArg("date_local", dateLocalMs)
                 .addArg("id_transaction", json.get("f0"))
                 .addArg("summa", summa.replace(",", "."))
@@ -121,6 +124,7 @@ public class ParseOrangeCsv implements PromiseGenerator, HttpHandler {
                             if (zipEntry.getName().endsWith(".csv")) {
                                 doAction(
                                         isThreadRun,
+                                        promise,
                                         jdbcResource,
                                         zis
                                 );
@@ -133,6 +137,7 @@ public class ParseOrangeCsv implements PromiseGenerator, HttpHandler {
                     } else {
                         doAction(
                                 isThreadRun,
+                                promise,
                                 jdbcResource,
                                 servletHandler.getRequestReader().getMultiPartFormData("file")
                         );
@@ -142,6 +147,7 @@ public class ParseOrangeCsv implements PromiseGenerator, HttpHandler {
 
     public void doAction(
             AtomicBoolean isThreadRun,
+            Promise promise,
             JdbcResource jdbcResource,
             InputStream is
     ) throws Throwable {
@@ -151,7 +157,7 @@ public class ParseOrangeCsv implements PromiseGenerator, HttpHandler {
                 5000,
                 listJson -> {
                     JdbcRequest jdbcRequest = new JdbcRequest(Orange.INSERT);
-                    listJson.forEach(json -> addToRequest(json, jdbcRequest));
+                    listJson.forEach(json -> addToRequest(promise, json, jdbcRequest));
                     Util.logConsole("insert");
                     jdbcResource.execute(jdbcRequest);
                 }

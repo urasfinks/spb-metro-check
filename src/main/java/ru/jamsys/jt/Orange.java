@@ -55,6 +55,7 @@ public enum Orange implements JdbcRequestRepository {
 
     INSERT("""
             INSERT INTO "spb-metro-check".orange (
+                date_fof,
                 date_local,
                 id_transaction,
                 summa,
@@ -62,6 +63,7 @@ public enum Orange implements JdbcRequestRepository {
                 gate,
                 f24
             ) values (
+                ${IN.date_fof::VARCHAR}::date,
                 ${IN.date_local::TIMESTAMP},
                 ${IN.id_transaction::VARCHAR},
                 ${IN.summa::NUMBER},
