@@ -112,7 +112,7 @@ public class ParseOrangeCsv implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 1200000L)
-                .then("check", (_, promise) -> SpbMetroCheckApplication.checkDateFofInRequest(promise))
+                .then("check", (_, promise) -> SpbMetroCheckApplication.checkStartDate(promise))
                 .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, promise, jdbcResource) -> {
                     ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
                     Map<String, String> name = servletHandler.getRequestReader().getMultiPartFormSubmittedFileName();

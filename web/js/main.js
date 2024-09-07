@@ -83,7 +83,10 @@ function ajax(url, callback) {
 function load() {
     window.getDate(function (dateStart, dateEnd) {
         ajax("/StatisticDb?date_start=" + dateStart + "&" + "date_end=" + dateEnd, function (data) {
-            if (data.exception == true) {
+            if (data.status != undefined && data.status == false) {
+                alert(data.cause);
+                return;
+            } else if (data.exception == true) {
                 alert(JSON.stringify(data));
                 return;
             }
@@ -122,27 +125,32 @@ function load() {
 }
 
 function load_kkt(obj) {
-    obj.classList.toggle('button--loading');
-    ajax("/StatisticKkt", function (data) {
+    window.getDate(function (dateStart, dateEnd) {
         obj.classList.toggle('button--loading');
-        if (data.exception == true) {
-            alert(JSON.stringify(data));
-            return;
-        }
-        var ar = [
-            "kkt-count",
-            "kkt-orange",
-            "kkt-diff"
-        ];
-        for (var i = 0; i < ar.length; i++) {
-            $$(ar[i]).innerHTML = "0";
-        }
-        for (var key in data) {
-            for (var i = 0; i < data[key].length; i++) {
-                var id = key + "-" + (data[key][i].title == null ? "" : data[key][i].title);
-                document.getElementById(id).innerHTML = data[key][i].count;
+        ajax("/StatisticKkt?date_start=" + dateStart + "&" + "date_end=" + dateEnd, function (data) {
+            obj.classList.toggle('button--loading');
+            if (data.status != undefined && data.status == false) {
+                alert(data.cause);
+                return;
+            } else if (data.exception == true) {
+                alert(JSON.stringify(data));
+                return;
             }
-        }
+            var ar = [
+                "kkt-count",
+                "kkt-orange",
+                "kkt-diff"
+            ];
+            for (var i = 0; i < ar.length; i++) {
+                $$(ar[i]).innerHTML = "0";
+            }
+            for (var key in data) {
+                for (var i = 0; i < data[key].length; i++) {
+                    var id = key + "-" + (data[key][i].title == null ? "" : data[key][i].title);
+                    document.getElementById(id).innerHTML = data[key][i].count;
+                }
+            }
+        });
     });
 }
 

@@ -162,7 +162,7 @@ public class SpbMetroCheckApplication {
         return newList.toArray(new String[0]);
     }
 
-    public static void checkDateFofInRequest(Promise promise) {
+    public static void checkStartDate(Promise promise) {
         checkDate(promise, "date_start");
     }
 

@@ -37,6 +37,7 @@ public enum KKT implements JdbcRequestRepository {
                  count(o1.*) as count_agg_orange,
                  sum(o1.summa) as summa_agg_orange
              FROM "spb-metro-check".orange o1
+             WHERE o1.date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
              GROUP BY o1.summa, (o1.code || o1.gate)
             )
             SELECT count(*), 'diff' as title FROM (
@@ -44,17 +45,20 @@ public enum KKT implements JdbcRequestRepository {
              LEFT JOIN orange_agg oa1
                  ON oa1.complex_code_orange = (k1.code || k1.gate)
                  AND oa1.summa_orange = k1.summa
+             WHERE k1.date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             ) AS sq1
             WHERE summa_agg_orange <> summa_agg
              OR count_agg_orange <> count_agg
              OR summa_agg IS NULL
              OR count_agg IS NULL
             UNION ALL SELECT count(*), 'count' AS title FROM "spb-metro-check".kkt
+            WHERE date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             UNION ALL SELECT count(*), 'orange' AS title FROM orange_agg
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
-    TRUNCATE("""
-            TRUNCATE "spb-metro-check".kkt
+    DELETE("""
+            DELETE FROM "spb-metro-check".kkt
+            WHERE date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     INSERT("""

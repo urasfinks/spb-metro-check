@@ -156,7 +156,7 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 1_200_000L)
-                .then("check", (_, promise) -> SpbMetroCheckApplication.checkDateFofInRequest(promise))
+                .then("check", (_, promise) -> SpbMetroCheckApplication.checkStartDate(promise))
                 .thenWithResource("selectStation", JdbcResource.class, "default", (_, promise, jdbcResource) -> {
                     JdbcRequest jdbcRequest = new JdbcRequest(Station.SELECT);
                     List<Map<String, Object>> execute = jdbcResource.execute(jdbcRequest);

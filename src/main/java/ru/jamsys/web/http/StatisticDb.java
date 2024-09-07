@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.jamsys.SpbMetroCheckApplication;
 import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.builder.HashMapBuilder;
 import ru.jamsys.core.extension.http.ServletHandler;
@@ -36,6 +37,7 @@ public class StatisticDb implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 10_000L)
+                .then("check", (_, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
                 .thenWithResource("loadTppStatistic", JdbcResource.class, "default", (_, promise, jdbcResource) -> {
                             ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
                             List<Map<String, Object>> execute = jdbcResource.execute(
@@ -68,7 +70,8 @@ public class StatisticDb implements PromiseGenerator, HttpHandler {
                             .append("orange", p.getRepositoryMap("orange", List.class))
                             .append("orange-agg", p.getRepositoryMap("orange-agg", List.class)));
                     servletHandler.responseComplete();
-                });
+                })
+                .extension(SpbMetroCheckApplication::addErrorHandler);
     }
 
 }
