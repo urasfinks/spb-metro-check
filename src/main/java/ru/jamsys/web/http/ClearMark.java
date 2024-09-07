@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.jamsys.SpbMetroCheckApplication;
 import ru.jamsys.core.component.ServicePromise;
+import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
@@ -29,12 +31,17 @@ public class ClearMark implements PromiseGenerator, HttpHandler {
 
     @Override
     public Promise generate() {
-        Promise promise = servicePromise.get(index, 1_200_000L);
-        return promise
-                .thenWithResource("tppClearMark", JdbcResource.class, "default", (_, _, jdbcResource)
-                        -> jdbcResource.execute(new JdbcRequest(TPP.CLEAR_MARK)))
-                .thenWithResource("orangeClearMark", JdbcResource.class, "default", (_, _, jdbcResource)
-                        -> jdbcResource.execute(new JdbcRequest(Orange.CLEAR_MARK)));
+        return servicePromise.get(index, 1_200_000L)
+                .then("check", (_, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
+                .thenWithResource("tppClearMark", JdbcResource.class, "default", (_, promise, jdbcResource)
+                        -> jdbcResource.execute(new JdbcRequest(TPP.CLEAR_MARK)
+                        .addArg(promise.getRepositoryMapClass(ServletHandler.class).getRequestReader().getMap())
+                ))
+                .thenWithResource("orangeClearMark", JdbcResource.class, "default", (_, promise, jdbcResource)
+                        -> jdbcResource.execute(new JdbcRequest(Orange.CLEAR_MARK)
+                        .addArg(promise.getRepositoryMapClass(ServletHandler.class).getRequestReader().getMap())
+                ))
+                .extension(SpbMetroCheckApplication::addErrorHandler);
     }
 
 }
