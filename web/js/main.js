@@ -221,10 +221,12 @@ window.blank_correction = function () {
 }
 
 window.blank = function (url) {
-    var anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.target = "_blank";
-    anchor.click();
+    window.getDate(function (dateStart, dateEnd) {
+        var anchor = document.createElement('a');
+        anchor.href = url + "?date_start=" + dateStart + "&" + "date_end=" + dateEnd;
+        anchor.target = "_blank";
+        anchor.click();
+    });
 }
 
 window.submitUpload = function () {
@@ -245,6 +247,7 @@ onReady(function () {
             }, 5000);
         });
     }
+
     si();
 
     load_kkt($$("load_kkt"));
