@@ -9,7 +9,6 @@ import ru.jamsys.SpbMetroCheckApplication;
 import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.flat.util.Util;
-import ru.jamsys.core.flat.util.UtilJson;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
@@ -20,7 +19,6 @@ import ru.jamsys.jt.KKT;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 @Component
@@ -35,38 +33,6 @@ public class ParseKKTCsv implements PromiseGenerator, HttpHandler {
 
     public ParseKKTCsv(ServicePromise servicePromise) {
         this.servicePromise = servicePromise;
-    }
-
-    AtomicInteger c = new AtomicInteger(0);
-
-    private void addToRequest(Map<String, Object> json, JdbcRequest jdbcRequest) {
-        int i = c.incrementAndGet();
-        json.put("f14", SpbMetroCheckApplication.expoReplace((String) json.get("f14")));
-        json.put("f8", SpbMetroCheckApplication.arrayReplace((String) json.get("f8")));
-        json.put("f9", SpbMetroCheckApplication.arrayReplace((String) json.get("f9")));
-        json.put("f26", SpbMetroCheckApplication.arrayReplace((String) json.get("f26")));
-
-        String dateLocalString = (String) json.get("f11");
-        long dateLocalMs;
-        try {
-            dateLocalMs = Util.getTimestamp(dateLocalString, "d.M.y H:m") * 1000;
-        } catch (Exception e) {
-            System.out.println(i);
-            System.out.println(UtilJson.toStringPretty(json, "{-}"));
-            throw new RuntimeException(e);
-        }
-        String complexCode = (String) json.get("f21");
-
-        String summa = (String) json.get("f10");
-
-        jdbcRequest
-                .addArg("date_local", dateLocalMs)
-                .addArg("id_transaction", json.get("f0"))
-                .addArg("summa", summa.replace(",", "."))
-                .addArg("code", complexCode.substring(0, 3))
-                .addArg("gate", complexCode.substring(3))
-                .addArg("f24", json.get("f24"))
-                .nextBatch();
     }
 
     @ToString
@@ -105,16 +71,20 @@ public class ParseKKTCsv implements PromiseGenerator, HttpHandler {
                                     XX last = null;
                                     try {
                                         last = list.getLast();
-                                    } catch (Throwable th) {
+                                    } catch (Throwable _) {
                                     }
                                     String f2 = (String) stringObjectMap.get("f2");
                                     if (last != null && !f2.isEmpty() && Util.isNumeric(f2)) {
                                         last.getItem().add(stringObjectMap);
                                     }
                                 }
+
+                                Map<String, String> map = servletHandler.getRequestReader().getMap();
+
                                 JdbcRequest jdbcRequest = new JdbcRequest(KKT.INSERT);
                                 list.forEach(xx -> xx.getItem().forEach(stringObjectMap -> {
                                     jdbcRequest
+                                            .addArg("date_fof", map.get("date_start"))
                                             .addArg("summa", s1)
                                             .addArg("code", xx.getCode())
                                             .addArg("gate", Util.padLeft((String) stringObjectMap.get("f2"), 3, "0"))
@@ -122,6 +92,7 @@ public class ParseKKTCsv implements PromiseGenerator, HttpHandler {
                                             .addArg("summa_agg", ((String) stringObjectMap.get("f4")).replace(",", "."))
                                             .nextBatch();
                                     jdbcRequest
+                                            .addArg("date_fof", map.get("date_start"))
                                             .addArg("summa", s2)
                                             .addArg("code", xx.getCode())
                                             .addArg("gate", Util.padLeft((String) stringObjectMap.get("f2"), 3, "0"))

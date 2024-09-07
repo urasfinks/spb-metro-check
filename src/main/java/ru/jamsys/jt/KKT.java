@@ -59,12 +59,14 @@ public enum KKT implements JdbcRequestRepository {
 
     INSERT("""
             INSERT INTO "spb-metro-check".kkt (
+                date_fof,
                 summa,
                 code,
                 gate,
                 count_agg,
                 summa_agg
             ) values (
+                ${IN.date_fof::VARCHAR}::date,
                 ${IN.summa::NUMBER},
                 ${IN.code::VARCHAR},
                 ${IN.gate::VARCHAR},
