@@ -80,7 +80,7 @@ function ajax(url, callback) {
     xmlhttp.send();
 }
 
-function load() {
+function load(callback) {
     window.getDate(function (dateStart, dateEnd) {
         ajax("/StatisticDb?date_start=" + dateStart + "&" + "date_end=" + dateEnd, function (data) {
             if (data.status != undefined && data.status == false) {
@@ -119,6 +119,9 @@ function load() {
                     str += "<div>" + data[key][i].title + ": " + data[key][i].count + "</div>";
                 }
                 $$("orange_group").innerHTML = str;
+            }
+            if (callback != undefined) {
+                callback();
             }
         });
     });
@@ -234,9 +237,15 @@ window.submitUpload = function () {
 onReady(function () {
     $$('all_date_start').value = new Date().toISOString().substring(0, 10);
     $$('all_date_end').value = new Date().toISOString().substring(0, 10);
-    setInterval(function () {
-        load();
-    }, 5000);
+
+    function si() {
+        load(function () {
+            setTimeout(function () {
+                si();
+            }, 5000);
+        });
+    }
+    si();
+    
     load_kkt($$("load_kkt"));
-    load();
 })
