@@ -15,6 +15,7 @@ public enum Orange implements JdbcRequestRepository {
             	    ON t1.id_transaction_orange = o1.id_transaction
             	WHERE o1.processed IS NULL
             	AND t1.id_transaction IS NULL
+            	AND o1.date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             )
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
@@ -23,6 +24,7 @@ public enum Orange implements JdbcRequestRepository {
             UPDATE "spb-metro-check".orange
             SET processed = 'checked', date_processed = now()::timestamp
             WHERE processed IS NULL
+            AND date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     DELETE("""
@@ -45,6 +47,7 @@ public enum Orange implements JdbcRequestRepository {
     PROCESSED("""
             SELECT * FROM "spb-metro-check".orange
             WHERE processed IN (${IN.processed::IN_ENUM_VARCHAR})
+            AND date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             ORDER BY date_local
             LIMIT 5000
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
@@ -52,6 +55,7 @@ public enum Orange implements JdbcRequestRepository {
     CLEAR_MARK("""
             UPDATE "spb-metro-check".orange
             SET processed = null
+            WHERE date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     INSERT("""

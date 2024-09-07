@@ -11,6 +11,7 @@ public enum TPP implements JdbcRequestRepository {
             SET processed = 'cancel', date_processed = now()::timestamp
             WHERE processed is NULL
             AND status = 'Не подлежит оплате'
+            AND date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     ACCEPTED_0("""
@@ -19,6 +20,7 @@ public enum TPP implements JdbcRequestRepository {
             WHERE processed is NULL
             AND status = 'Принято в обработку в ТПП'
             AND date_fn is null
+            AND date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     ACCEPTED("""
@@ -26,6 +28,7 @@ public enum TPP implements JdbcRequestRepository {
             SET processed = 'accepted_tpp', date_processed = now()::timestamp
             WHERE processed is NULL
             AND status = 'Принято в ТПП'
+            AND date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     NOT_ORANGE("""
@@ -37,6 +40,7 @@ public enum TPP implements JdbcRequestRepository {
             	    ON t1.id_transaction_orange = o1.id_transaction
             	WHERE t1.processed is NULL
             	AND o1.id_transaction IS NULL
+            	AND t1.date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             )
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
@@ -53,6 +57,7 @@ public enum TPP implements JdbcRequestRepository {
             			t1.date_local,
             			t1.date_fn
             			FROM "spb-metro-check".tpp t1
+            			WHERE t1.date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             		ORDER BY id ASC
             	) AS q1
             	WHERE q1.date_fn > q1.ts
@@ -62,6 +67,7 @@ public enum TPP implements JdbcRequestRepository {
     PROCESSED("""
             SELECT * FROM "spb-metro-check".tpp
             WHERE processed IN (${IN.processed::IN_ENUM_VARCHAR})
+            AND date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             ORDER BY date_local
             LIMIT 5000
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
@@ -70,6 +76,7 @@ public enum TPP implements JdbcRequestRepository {
             UPDATE "spb-metro-check".tpp
             SET processed = 'checked', date_processed = now()::timestamp
             WHERE processed IS NULL
+            AND date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     DELETE("""
@@ -89,6 +96,7 @@ public enum TPP implements JdbcRequestRepository {
     CLEAR_MARK("""
             UPDATE "spb-metro-check".tpp
             SET processed = null
+            WHERE date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     INSERT("""
