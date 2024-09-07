@@ -246,6 +246,6 @@ onReady(function () {
         });
     }
     si();
-    
+
     load_kkt($$("load_kkt"));
 })
