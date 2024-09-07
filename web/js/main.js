@@ -151,7 +151,9 @@ window.doRange = function (url, obj) {
         obj.classList.toggle('button--loading');
         ajax(url + "?date_start=" + dateStart + "&" + "date_end=" + dateEnd, function (data) {
             obj.classList.toggle('button--loading');
-            if (data.exception == true) {
+            if (data.status != undefined && data.status == false) {
+                alert(data.cause);
+            } else if (data.exception == true) {
                 alert(JSON.stringify(data));
             } else {
                 alert("Ok");

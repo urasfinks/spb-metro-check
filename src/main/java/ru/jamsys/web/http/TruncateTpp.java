@@ -44,6 +44,7 @@ public class TruncateTpp implements PromiseGenerator, HttpHandler {
                                                 .getRequestReader()
                                                 .getMap()
                                         )
-                        ));
+                        ))
+                .extension(SpbMetroCheckApplication::addErrorHandler);
     }
 }

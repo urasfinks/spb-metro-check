@@ -7,6 +7,7 @@ import com.opencsv.CSVReaderBuilder;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import ru.jamsys.core.App;
 import ru.jamsys.core.extension.builder.HashMapBuilder;
+import ru.jamsys.core.extension.exception.JsonSchemaException;
 import ru.jamsys.core.extension.functional.ConsumerThrowing;
 import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.flat.util.UtilDate;
@@ -187,6 +188,23 @@ public class SpbMetroCheckApplication {
         if (dateEnd < dateStart) {
             throw new RuntimeException("Конечная дата меньше начальной");
         }
+    }
+
+    public static void addErrorHandler(Promise promiseSource) {
+        promiseSource.onError((_, promise) -> errorHandler(promise));
+    }
+
+    public static void errorHandler(Promise promise) {
+        App.error(promise.getException());
+        ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
+        servletHandler.setResponseContentType("application/json");
+        Throwable exception = promise.getException();
+        if (exception instanceof JsonSchemaException) {
+            servletHandler.setResponseError(((JsonSchemaException) exception).getResponseError());
+        } else {
+            servletHandler.setResponseError(promise.getException().getMessage());
+        }
+        servletHandler.responseComplete();
     }
 
 }
