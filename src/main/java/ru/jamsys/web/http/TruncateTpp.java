@@ -38,7 +38,7 @@ public class TruncateTpp implements PromiseGenerator, HttpHandler {
                         JdbcResource.class,
                         "default",
                         (_, promise, jdbcResource) -> jdbcResource.execute(
-                                new JdbcRequest(TPP.TRUNCATE)
+                                new JdbcRequest(TPP.DELETE)
                                         .addArg(promise
                                                 .getRepositoryMapClass(ServletHandler.class)
                                                 .getRequestReader()
