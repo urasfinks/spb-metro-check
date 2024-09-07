@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.jamsys.SpbMetroCheckApplication;
 import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.promise.Promise;
@@ -31,6 +32,7 @@ public class MarkingTransaction implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 1_200_000L)
+                .then("check", (_, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
                 .thenWithResource("tppCancel", JdbcResource.class, "default", (_, promise, jdbcResource)
                         -> jdbcResource.execute(new JdbcRequest(TPP.CANCEL)
                         .addArg(promise.getRepositoryMapClass(ServletHandler.class).getRequestReader().getMap())
@@ -62,7 +64,8 @@ public class MarkingTransaction implements PromiseGenerator, HttpHandler {
                 .thenWithResource("orangeFillContinue", JdbcResource.class, "default", (_, promise, jdbcResource)
                         -> jdbcResource.execute(new JdbcRequest(Orange.FILL_CONTINUE)
                         .addArg(promise.getRepositoryMapClass(ServletHandler.class).getRequestReader().getMap())
-                ));
+                ))
+                .extension(SpbMetroCheckApplication::addErrorHandler);
     }
 
 }
