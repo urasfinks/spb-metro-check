@@ -9,6 +9,7 @@ import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.exception.ForwardException;
 import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.flat.util.Util;
+import ru.jamsys.core.flat.util.UtilDate;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
@@ -117,12 +118,12 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
     private void addToRequest(Promise promise, Map<String, Object> json, JdbcRequest jdbcRequest, Map<String, String> station) {
         try {
             String dateLocalString = json.get("f0") + " " + json.get("f1");
-            Long dateLocalMs = Util.getTimestamp(dateLocalString, "d.M.y H:m:s") * 1000;
+            Long dateLocalMs = UtilDate.getTimestamp(dateLocalString, "d.M.y H:m:s") * 1000;
 
             Long dateFnMs = null;
             String dateFnString = json.get("f55") + " " + json.get("f56");
             if (!dateFnString.trim().isEmpty()) {
-                dateFnMs = Util.getTimestamp(dateFnString, "d.M.y H:m:s") * 1000;
+                dateFnMs = UtilDate.getTimestamp(dateFnString, "d.M.y H:m:s") * 1000;
             }
 
             String o = (String) json.get("f17");
@@ -155,6 +156,7 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 1_200_000L)
+                .then("check", (_, promise) -> SpbMetroCheckApplication.checkDateFofInRequest(promise))
                 .thenWithResource("selectStation", JdbcResource.class, "default", (_, promise, jdbcResource) -> {
                     JdbcRequest jdbcRequest = new JdbcRequest(Station.SELECT);
                     List<Map<String, Object>> execute = jdbcResource.execute(jdbcRequest);

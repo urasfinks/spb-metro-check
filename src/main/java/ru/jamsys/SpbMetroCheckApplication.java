@@ -8,6 +8,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import ru.jamsys.core.App;
 import ru.jamsys.core.extension.builder.HashMapBuilder;
 import ru.jamsys.core.extension.functional.ConsumerThrowing;
+import ru.jamsys.core.extension.http.ServletHandler;
+import ru.jamsys.core.flat.util.UtilDate;
+import ru.jamsys.core.promise.Promise;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -156,6 +159,21 @@ public class SpbMetroCheckApplication {
             newList.add(map.getOrDefault(key, key));
         }
         return newList.toArray(new String[0]);
+    }
+
+    public static void checkDateFofInRequest(Promise promise) {
+        ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
+        Map<String, String> map = servletHandler.getRequestReader().getMap();
+        if (!map.containsKey("date_start")) {
+            throw new RuntimeException("date_start not exist");
+        }
+        String dateStart = map.get("date_start");
+        if (dateStart == null) {
+            throw new RuntimeException("date_start is empty");
+        }
+        if (!UtilDate.validate(dateStart, "yyyy-MM-dd")) {
+            throw new RuntimeException("date_start failed validate format: yyyy-MM-dd");
+        }
     }
 
 }

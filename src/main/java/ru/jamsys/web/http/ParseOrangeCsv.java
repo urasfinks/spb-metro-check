@@ -8,6 +8,7 @@ import ru.jamsys.SpbMetroCheckApplication;
 import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.flat.util.Util;
+import ru.jamsys.core.flat.util.UtilDate;
 import ru.jamsys.core.flat.util.UtilJson;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
@@ -85,7 +86,7 @@ public class ParseOrangeCsv implements PromiseGenerator, HttpHandler {
         String dateLocalString = (String) json.get("f11");
         long dateLocalMs;
         try {
-            dateLocalMs = Util.getTimestamp(dateLocalString, "d.M.y H:m") * 1000;
+            dateLocalMs = UtilDate.getTimestamp(dateLocalString, "d.M.y H:m") * 1000;
         } catch (Exception e) {
             System.out.println(i);
             System.out.println(UtilJson.toStringPretty(json, "{-}"));
@@ -111,6 +112,7 @@ public class ParseOrangeCsv implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 1200000L)
+                .then("check", (_, promise) -> SpbMetroCheckApplication.checkDateFofInRequest(promise))
                 .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, promise, jdbcResource) -> {
                     ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
                     Map<String, String> name = servletHandler.getRequestReader().getMultiPartFormSubmittedFileName();
