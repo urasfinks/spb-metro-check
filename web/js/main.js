@@ -223,7 +223,9 @@ window.blank_correction = function () {
 window.blank = function (url) {
     window.getDate(function (dateStart, dateEnd) {
         var anchor = document.createElement('a');
-        anchor.href = url + "?date_start=" + dateStart + "&" + "date_end=" + dateEnd;
+        var chAdd = url.split("?").length == 1 ? "?" : "&";
+
+        anchor.href = url + chAdd + "date_start=" + dateStart + "&" + "date_end=" + dateEnd;
         anchor.target = "_blank";
         anchor.click();
     });

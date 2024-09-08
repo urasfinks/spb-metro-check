@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.jamsys.SpbMetroCheckApplication;
 import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.promise.Promise;
@@ -43,19 +44,33 @@ public class CsvRefund implements PromiseGenerator, HttpHandler {
     public Promise generate() {
 
         return servicePromise.get(index, 60_000L)
-                .thenWithResource("selectStation", JdbcResource.class, "default", (_, promise, jdbcResource) -> {
-                    JdbcRequest jdbcRequest = new JdbcRequest(Station.SELECT);
-                    List<Map<String, Object>> execute = jdbcResource.execute(jdbcRequest);
-                    Map<String, String> station = new HashMap<>();
-                    execute.forEach(stringObjectMap
-                            -> station.put((String) stringObjectMap.get("code"), (String) stringObjectMap.get("place")));
-                    promise.setRepositoryMap("station", station);
-                })
-                .thenWithResource("loadFromDb", JdbcResource.class, "default", (_, p, jdbcResource) -> {
-                    JdbcRequest jdbcRequest = new JdbcRequest(TPP.PROCESSED);
-                    jdbcRequest.addArg("processed", List.of("fn_future"));
-                    p.setRepositoryMap("result", jdbcResource.execute(jdbcRequest));
-                })
+                .then("check", (_, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
+                .thenWithResource(
+                        "selectStation",
+                        JdbcResource.class,
+                        "default",
+                        (_, promise, jdbcResource) -> {
+                            JdbcRequest jdbcRequest = new JdbcRequest(Station.SELECT);
+                            List<Map<String, Object>> execute = jdbcResource.execute(jdbcRequest);
+                            Map<String, String> station = new HashMap<>();
+                            execute.forEach(stringObjectMap -> station.put(
+                                    (String) stringObjectMap.get("code"),
+                                    (String) stringObjectMap.get("place"))
+                            );
+                            promise.setRepositoryMap("station", station);
+                        }
+                )
+                .thenWithResource(
+                        "loadFromDb",
+                        JdbcResource.class,
+                        "default",
+                        (_, promise, jdbcResource) -> promise.setRepositoryMap("result", jdbcResource.execute(
+                                new JdbcRequest(TPP.PROCESSED)
+                                        .addArg(promise
+                                                .getRepositoryMapClass(ServletHandler.class)
+                                                .getRequestReader()
+                                                .getMap())
+                                        .addArg("processed", List.of("fn_future")))))
                 .then("generateCsv", (_, promise) -> {
 
                     @SuppressWarnings("unchecked")

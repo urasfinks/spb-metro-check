@@ -40,15 +40,20 @@ public class CsvAccepted implements PromiseGenerator, HttpHandler {
 
     @Override
     public Promise generate() {
-
         return servicePromise.get(index, 60_000L)
-                .thenWithResource("loadFromDb", JdbcResource.class, "default", (_, p, jdbcResource) -> {
-                    JdbcRequest jdbcRequest = new JdbcRequest(TPP.PROCESSED);
-                    jdbcRequest.addArg("processed", List.of("accepted_tpp"));
-                    p.setRepositoryMap("result", jdbcResource.execute(jdbcRequest));
-                })
+                .then("check", (_, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
+                .thenWithResource(
+                        "loadFromDb",
+                        JdbcResource.class,
+                        "default",
+                        (_, promise, jdbcResource) -> promise.setRepositoryMap("result", jdbcResource.execute(
+                                new JdbcRequest(TPP.PROCESSED)
+                                        .addArg(promise
+                                                .getRepositoryMapClass(ServletHandler.class)
+                                                .getRequestReader()
+                                                .getMap())
+                                        .addArg("processed", List.of("accepted_tpp")))))
                 .then("generateCsv", (_, promise) -> {
-
                     @SuppressWarnings("unchecked")
                     List<Map<String, Object>> result = promise.getRepositoryMap("result", List.class);
 
