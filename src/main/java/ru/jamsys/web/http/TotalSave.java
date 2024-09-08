@@ -8,7 +8,6 @@ import ru.jamsys.SpbMetroCheckApplication;
 import ru.jamsys.core.component.ServicePromise;
 import ru.jamsys.core.extension.builder.HashMapBuilder;
 import ru.jamsys.core.extension.http.ServletHandler;
-import ru.jamsys.core.flat.util.UtilJson;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
 import ru.jamsys.core.resource.jdbc.JdbcRequest;
@@ -81,7 +80,7 @@ public class TotalSave implements PromiseGenerator, HttpHandler {
                         "loadOrangeStatistic",
                         JdbcResource.class,
                         "default",
-                        (_, promise, jdbcResource) -> promise.setRepositoryMap("orange-agg", jdbcResource.execute(
+                        (_, promise, jdbcResource) -> promise.setRepositoryMap("orange-statistic", jdbcResource.execute(
                                         new JdbcRequest(Orange.STATISTIC_2).addArg(promise
                                                 .getRepositoryMapClass(ServletHandler.class)
                                                 .getRequestReader()
@@ -113,11 +112,10 @@ public class TotalSave implements PromiseGenerator, HttpHandler {
                             HashMapBuilder<Object, Object> append = new HashMapBuilder<>()
                                     .append("tpp", promise.getRepositoryMap("tpp", List.class))
                                     .append("orange", promise.getRepositoryMap("orange", List.class))
-                                    .append("orange-agg", promise.getRepositoryMap("orange-agg", List.class))
+                                    .append("orange-statistic", promise.getRepositoryMap("orange-statistic", List.class))
                                     .append("kkt", promise.getRepositoryMap("kkt", List.class));
 
                             String date = servletHandler.getRequestReader().getMap().getOrDefault("date_start", "-");
-                            System.out.println(UtilJson.toStringPretty(append, "{}"));
                             append.forEach((key, value) -> {
                                 @SuppressWarnings("unchecked")
                                 List<Map<String, Object>> list = (List<Map<String, Object>>) value;
