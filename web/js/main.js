@@ -61,7 +61,7 @@ dropContainer.addEventListener("drop", (e) => {
     fileInput.files = e.dataTransfer.files;
 });
 
-function ajax(url, callback) {
+function ajax(url, callback, onError) {
     $$("error").innerHTML = "";
     var xmlhttp = new XMLHttpRequest();
 
@@ -72,6 +72,9 @@ function ajax(url, callback) {
                 callback(data);
             } else if (xmlhttp.status == 0) {
                 $$("error").innerHTML = 'Server error';
+                if (onError != undefined) {
+                    onError();
+                }
             }
         }
     };
@@ -120,6 +123,10 @@ function load(callback) {
                 }
                 $$("orange_group").innerHTML = str;
             }
+            if (callback != undefined) {
+                callback();
+            }
+        }, function () {
             if (callback != undefined) {
                 callback();
             }
@@ -193,6 +200,8 @@ window.doRange = function (url, obj, confirmMsg) {
             } else {
                 alert("Ok");
             }
+        }, function () {
+            obj.classList.toggle('button--loading');
         });
     });
 }
@@ -214,6 +223,8 @@ window.doOnceDate = function (url, obj, confirmMsg) {
             } else {
                 alert("Ok");
             }
+        }, function () {
+            obj.classList.toggle('button--loading');
         });
     });
 }
