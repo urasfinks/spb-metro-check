@@ -157,10 +157,34 @@ function load_kkt(obj) {
     });
 }
 
-window.doRange = function (url, obj) {
+window.urlAppendGet = function (url, append) {
+    var chAdd = url.split("?").length == 1 ? "?" : "&";
+    return url + chAdd + append;
+}
+
+window.isoDateConvert = function (isDate) {
+    var options = {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        timezone: 'UTC'
+    };
+    return new Date(isDate).toLocaleString("ru", options);
+    //return new Date(isDate).toDateString();
+}
+
+window.doRange = function (url, obj, confirmMsg) {
     window.getDate(function (dateStart, dateEnd) {
+        if (confirmMsg != undefined) {
+            var msg = dateStart == dateEnd
+                ? " за дату: " + isoDateConvert(dateStart)
+                : " за период : с " + isoDateConvert(dateStart) + " по " + isoDateConvert(dateEnd) + " включительно";
+            if (!confirm(confirmMsg + msg)) {
+                return;
+            }
+        }
         obj.classList.toggle('button--loading');
-        ajax(url + "?date_start=" + dateStart + "&" + "date_end=" + dateEnd, function (data) {
+        ajax(urlAppendGet(url, "date_start=" + dateStart + "&" + "date_end=" + dateEnd), function (data) {
             obj.classList.toggle('button--loading');
             if (data.status != undefined && data.status == false) {
                 alert(data.cause);
@@ -170,40 +194,28 @@ window.doRange = function (url, obj) {
                 alert("Ok");
             }
         });
-    })
-
+    });
 }
 
-window.total_save = function (obj) {
-    var total_date = document.getElementById('total_date').value;
-    if (total_date == undefined || total_date.trim() == "") {
-        alert("Не задана дата");
-        return;
-    }
-    window.do('/SaveTotal?docDate=' + total_date, obj);
-}
-
-window.total_remove = function (obj) {
-    var total_date = document.getElementById('total_date_remove').value;
-    if (total_date == undefined || total_date.trim() == "") {
-        alert("Не задана дата");
-        return;
-    }
-    window.do('/RemoveTotal?docDate=' + total_date, obj);
-}
-
-window.total_get = function () {
-    var total_date_start = document.getElementById('total_date_start').value;
-    if (total_date_start == undefined || total_date_start.trim() == "") {
-        alert("Не задана дата начала");
-        return;
-    }
-    var total_date_end = document.getElementById('total_date_end').value;
-    if (total_date_end == undefined || total_date_end.trim() == "") {
-        alert("Не задана дата конца");
-        return;
-    }
-    window.blank('/CsvTotal?docDateStart=' + total_date_start + '&docDateEnd=' + total_date_end);
+window.doOnceDate = function (url, obj, confirmMsg) {
+    window.getOnceDate(function (dateStart) {
+        if (confirmMsg != undefined) {
+            if (!confirm(confirmMsg + " за дату: " + isoDateConvert(dateStart))) {
+                return;
+            }
+        }
+        obj.classList.toggle('button--loading');
+        ajax(urlAppendGet(url, "date_start=" + dateStart), function (data) {
+            obj.classList.toggle('button--loading');
+            if (data.status != undefined && data.status == false) {
+                alert(data.cause);
+            } else if (data.exception == true) {
+                alert(JSON.stringify(data));
+            } else {
+                alert("Ok");
+            }
+        });
+    });
 }
 
 window.blank_correction = function () {
@@ -223,9 +235,7 @@ window.blank_correction = function () {
 window.blank = function (url) {
     window.getDate(function (dateStart, dateEnd) {
         var anchor = document.createElement('a');
-        var chAdd = url.split("?").length == 1 ? "?" : "&";
-
-        anchor.href = url + chAdd + "date_start=" + dateStart + "&" + "date_end=" + dateEnd;
+        anchor.href = urlAppendGet(url, "date_start=" + dateStart + "&" + "date_end=" + dateEnd);
         anchor.target = "_blank";
         anchor.click();
     });

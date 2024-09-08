@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 @RequestMapping
-public class CsvTotal implements PromiseGenerator, HttpHandler {
+public class TotalCsv implements PromiseGenerator, HttpHandler {
 
     @Getter
     @Setter
@@ -34,7 +34,7 @@ public class CsvTotal implements PromiseGenerator, HttpHandler {
 
     private final ServicePromise servicePromise;
 
-    public CsvTotal(ServicePromise servicePromise) {
+    public TotalCsv(ServicePromise servicePromise) {
         this.servicePromise = servicePromise;
     }
 
@@ -42,21 +42,19 @@ public class CsvTotal implements PromiseGenerator, HttpHandler {
     public Promise generate() {
 
         return servicePromise.get(index, 60_000L)
-                .thenWithResource("loadFromDb", JdbcResource.class, "default", (_, p, jdbcResource) -> {
-                    ServletHandler servletHandler = p.getRepositoryMapClass(ServletHandler.class);
-                    String dateStart = servletHandler.getRequestReader().getMap().getOrDefault("docDateStart", "-");
-                    String dateEnd = servletHandler.getRequestReader().getMap().getOrDefault("docDateEnd", "-");
-                    JdbcRequest jdbcRequest = new JdbcRequest(Total.TOTAL);
-                    jdbcRequest
-                            .addArg("date_start", dateStart)
-                            .addArg("date_end", dateEnd);
-                    p.setRepositoryMap("result", jdbcResource.execute(jdbcRequest));
+                .then("check", (_, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
+                .thenWithResource("loadFromDb", JdbcResource.class, "default", (_, promise, jdbcResource) -> {
+                    JdbcRequest jdbcRequest = new JdbcRequest(Total.TOTAL)
+                            .addArg(promise
+                                    .getRepositoryMapClass(ServletHandler.class)
+                                    .getRequestReader()
+                                    .getMap());
+                    promise.setRepositoryMap("result", jdbcResource.execute(jdbcRequest));
                 })
                 .then("generateCsv", (_, promise) -> {
 
                     @SuppressWarnings("unchecked")
                     List<Map<String, Object>> result = promise.getRepositoryMap("result", List.class);
-
                     ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
 
                     servletHandler.setResponseHeader("Content-Type", "text/csv");
@@ -81,7 +79,8 @@ public class CsvTotal implements PromiseGenerator, HttpHandler {
                     csvWriter.flush();
                     csvWriter.close();
                 })
-                .onComplete((_, promise) -> promise.getRepositoryMapClass(ServletHandler.class).getCompletableFuture().complete(null));
+                .onComplete((_, promise) -> promise.getRepositoryMapClass(ServletHandler.class).getCompletableFuture().complete(null))
+                .extension(SpbMetroCheckApplication::addErrorHandler);
     }
 
     public String getUniqueFileName(String direction) {

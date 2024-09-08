@@ -21,7 +21,7 @@ public enum Total implements JdbcRequestRepository {
     REMOVE("""
             DELETE
             FROM "spb-metro-check".total
-            WHERE date_fof = ${IN.date_fof::VARCHAR}::timestamp
+            WHERE date_fof between ${IN.date_start::VARCHAR}::timestamp and ${IN.date_end::VARCHAR}::timestamp
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     INSERT("""

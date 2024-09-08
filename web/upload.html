@@ -23,19 +23,23 @@
 
                 <div class="label">Операции</div>
 
-                <button type="button" class="button" onclick="window.doRange('/TruncateTpp', this)">
+                <button type="button" class="button"
+                        onclick="window.doRange('/TruncateTpp', this, 'Подтвердите удаление данных ТПП')">
                     <span class="button__text">Очистить ТПП</span>
                 </button>
-                <button type="button" class="button" onclick="window.doRange('/TruncateOrange', this)">
+                <button type="button" class="button"
+                        onclick="window.doRange('/TruncateOrange', this, 'Подтвердите удаление данных Orange')">
                     <span class="button__text">Очистить Orange</span>
                 </button>
-                <button type="button" class="button" onclick="window.doRange('/TruncateKkt', this)">
+                <button type="button" class="button"
+                        onclick="window.doRange('/TruncateKkt', this, 'Подтвердите удаление данных ККТ')">
                     <span class="button__text">Очистить KKT</span>
                 </button>
-                <button type="button" class="button" onclick="window.doRange('/MarkingTransaction', this)">
+                <button type="button" class="button" onclick="window.doRange('/MarkingTransaction', this, undefined)">
                     <span class="button__text">Обработать транзакции</span>
                 </button>
-                <button type="button" class="button" onclick="window.doRange('/ClearMark', this)">
+                <button type="button" class="button"
+                        onclick="window.doRange('/ClearMark', this, 'Подтвердите очистку статусов')">
                     <span class="button__text">Сбросить обработку</span>
                 </button>
 
@@ -46,11 +50,15 @@
                 <button class="extraButton" onclick="window.blank('/CsvRefund')">Возврат.csv</button><!--fn_future-->
                 <button class="extraButton" onclick="window.blank_correction()">
                     Коррекция.csv
-                    <input type="date" id="refund_date" name="trip-start" onclick="event.stopPropagation()" style="font-size: 10px;"/>
-                    <input type="text" id="doc_number" placeholder="№" onclick="event.stopPropagation()" style="width:40px;font-size: 10px;"/>
+                    <input type="date" id="refund_date" name="trip-start" onclick="event.stopPropagation()"
+                           style="font-size: 10px;"/>
+                    <input type="text" id="doc_number" placeholder="№" onclick="event.stopPropagation()"
+                           style="width:40px;font-size: 10px;"/>
                 </button><!--fn_future, Not_orange-->
-                <button class="extraButton" onclick="window.blank('/CsvNotTpp')">Нет данных в ТПП.csv</button><!--Not_tpp-->
-                <button class="extraButton" onclick="window.blank('/CsvDiffKkt')">Расхождения с ККТ.csv</button><!--Not_tpp-->
+                <button class="extraButton" onclick="window.blank('/CsvNotTpp')">Нет данных в ТПП.csv</button>
+                <!--Not_tpp-->
+                <button class="extraButton" onclick="window.blank('/CsvDiffKkt')">Расхождения с ККТ.csv</button>
+                <!--Not_tpp-->
 
                 <!--<button class="extraButton">
                     Открыть сводную за период: &nbsp;&nbsp;
@@ -59,18 +67,26 @@
                 </button>-->
 
                 <div class="label">Сводная</div>
-                <button class="extraButton" onclick="window.total_save(this)">Сохранить</button>
+                <button class="extraButton"
+                        onclick="window.doOnceDate('/TotalSave', this, 'Подтвердите сохранение сводной')">
+                    Сохранить
+                </button>
 
-                <button class="extraButton" onclick="window.total_get()">Получить</button>
+                <button class="extraButton" onclick="window.blank('/TotalCsv')">Получить</button>
 
-                <button class="extraButton" onclick="window.total_remove(this)">Удалить</button>
+                <button class="extraButton"
+                        onclick="window.doRange('/TotalRemove', this, 'Подтвердите удаление сводных')">Удалить
+                </button>
             </div>
         </td>
         <td rowspan="2" style="width:250px;line-height: 150%;" valign="top" class="td-round logo">
             <div style="">
                 <div class="label">
-                    <input type="date" id="all_date_start" name="trip-start" style="font-size: 10px;" onclick="event.stopPropagation()" onchange="$$('all_date_end').value=this.value;load();load_kkt($$('load_kkt'));"/>
-                    <input type="date" id="all_date_end" name="trip-start" style="font-size: 10px;" onclick="event.stopPropagation()" onchange="load();load_kkt($$('load_kkt'));"/>
+                    <input type="date" id="all_date_start" name="trip-start" style="font-size: 10px;"
+                           onclick="event.stopPropagation()"
+                           onchange="$$('all_date_end').value=this.value;load();load_kkt($$('load_kkt'));"/>
+                    <input type="date" id="all_date_end" name="trip-start" style="font-size: 10px;"
+                           onclick="event.stopPropagation()" onchange="load();load_kkt($$('load_kkt'));"/>
                 </div>
 
                 <div class="label">ТПП</div>
@@ -102,7 +118,8 @@
     </tr>
     <tr>
         <td class="td-round">
-            <form method="POST" enctype="multipart/form-data" id="form-upload" action="/ParseTppCsv" target="_blank" style="cursor: pointer;">
+            <form method="POST" enctype="multipart/form-data" id="form-upload" action="/ParseTppCsv" target="_blank"
+                  style="cursor: pointer;">
                 <table class="tx">
                     <tr>
                         <td colspan="2">
@@ -123,7 +140,8 @@
                             </select>
                             <input type="hidden" id="date_start" name="date_start">
                             &nbsp;&nbsp;
-                            <input type="button" onclick="window.submitUpload();" value="Загрузить" class="extraButton orange-bg">
+                            <input type="button" onclick="window.submitUpload();" value="Загрузить"
+                                   class="extraButton orange-bg">
                         </td>
                     </tr>
                 </table>
