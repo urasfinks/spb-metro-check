@@ -83,22 +83,28 @@ public class ParseKKTCsv implements PromiseGenerator, HttpHandler {
 
                                 JdbcRequest jdbcRequest = new JdbcRequest(KKT.INSERT);
                                 list.forEach(xx -> xx.getItem().forEach(stringObjectMap -> {
-                                    jdbcRequest
-                                            .addArg("date_fof", map.get("date_start"))
-                                            .addArg("summa", s1)
-                                            .addArg("code", xx.getCode())
-                                            .addArg("gate", Util.padLeft((String) stringObjectMap.get("f2"), 3, "0"))
-                                            .addArg("count_agg", stringObjectMap.get("f3"))
-                                            .addArg("summa_agg", ((String) stringObjectMap.get("f4")).replace(",", "."))
-                                            .nextBatch();
-                                    jdbcRequest
-                                            .addArg("date_fof", map.get("date_start"))
-                                            .addArg("summa", s2)
-                                            .addArg("code", xx.getCode())
-                                            .addArg("gate", Util.padLeft((String) stringObjectMap.get("f2"), 3, "0"))
-                                            .addArg("count_agg", stringObjectMap.get("f5"))
-                                            .addArg("summa_agg", ((String) stringObjectMap.get("f6")).replace(",", "."))
-                                            .nextBatch();
+                                    String su1 = (String) stringObjectMap.get("f3");
+                                    if (su1 != null && !su1.isEmpty()) {
+                                        jdbcRequest
+                                                .addArg("date_fof", map.get("date_start"))
+                                                .addArg("summa", s1)
+                                                .addArg("code", xx.getCode())
+                                                .addArg("gate", Util.padLeft((String) stringObjectMap.get("f2"), 3, "0"))
+                                                .addArg("count_agg", stringObjectMap.get("f3"))
+                                                .addArg("summa_agg", ((String) stringObjectMap.get("f4")).replace(",", "."))
+                                                .nextBatch();
+                                    }
+                                    String su2 = (String) stringObjectMap.get("f5");
+                                    if (su2 != null && !su2.isEmpty()) {
+                                        jdbcRequest
+                                                .addArg("date_fof", map.get("date_start"))
+                                                .addArg("summa", s2)
+                                                .addArg("code", xx.getCode())
+                                                .addArg("gate", Util.padLeft((String) stringObjectMap.get("f2"), 3, "0"))
+                                                .addArg("count_agg", stringObjectMap.get("f5"))
+                                                .addArg("summa_agg", ((String) stringObjectMap.get("f6")).replace(",", "."))
+                                                .nextBatch();
+                                    }
                                 }));
                                 jdbcResource.execute(jdbcRequest);
                             }
