@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS "spb-metro-check".orange
     code character varying(255) NOT NULL,
     gate character varying(255) NOT NULL,
     f24 character varying(255) NOT NULL,
+    f25 character varying(255) NOT NULL,
     processed character varying(255),
     date_processed timestamp without time zone,
     PRIMARY KEY (id)

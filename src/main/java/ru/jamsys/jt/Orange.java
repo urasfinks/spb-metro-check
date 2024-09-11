@@ -39,9 +39,13 @@ public enum Orange implements JdbcRequestRepository {
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     STATISTIC_2("""
-            SELECT f24 as title, count(*) FROM "spb-metro-check".orange
+            SELECT 'Тип ' || f24 as title, count(*) FROM "spb-metro-check".orange
             WHERE date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             GROUP BY f24
+            UNION ALL
+            SELECT 'Чек ' || f25 as title, count(*) FROM "spb-metro-check".orange
+            WHERE date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
+            GROUP BY f25
             """, StatementType.SELECT_WITH_AUTO_COMMIT),
 
     PROCESSED("""
@@ -66,7 +70,8 @@ public enum Orange implements JdbcRequestRepository {
                 summa,
                 code,
                 gate,
-                f24
+                f24,
+                f25
             ) values (
                 ${IN.date_fof::VARCHAR}::date,
                 ${IN.date_local::TIMESTAMP},
@@ -74,7 +79,8 @@ public enum Orange implements JdbcRequestRepository {
                 ${IN.summa::NUMBER},
                 ${IN.code::VARCHAR},
                 ${IN.gate::VARCHAR},
-                ${IN.f24::VARCHAR}
+                ${IN.f24::VARCHAR},
+                ${IN.f25::VARCHAR}
             );
             """, StatementType.SELECT_WITH_AUTO_COMMIT);
 

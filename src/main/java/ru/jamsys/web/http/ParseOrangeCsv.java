@@ -106,6 +106,7 @@ public class ParseOrangeCsv implements PromiseGenerator, HttpHandler {
                 .addArg("code", complexCode.substring(0,3))
                 .addArg("gate", complexCode.substring(3))
                 .addArg("f24", json.get("f24"))
+                .addArg("f25", json.get("f25"))
                 .nextBatch();
     }
 

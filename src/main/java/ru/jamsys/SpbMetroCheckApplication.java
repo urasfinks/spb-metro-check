@@ -136,6 +136,7 @@ public class SpbMetroCheckApplication {
                 .append("date_local", "Локальная дата")
                 .append("id_transaction", "Идентификатор транзакции")
                 .append("f24", "Тип операции")
+                .append("f25", "Тип чека")
                 .append("processed", "Производный статус")
                 .append("date_processed", "Дата установки производного статуса")
                 .append("place", "Полное наименование станции")
