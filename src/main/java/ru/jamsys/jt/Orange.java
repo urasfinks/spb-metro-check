@@ -40,7 +40,7 @@ public enum Orange implements JdbcRequestRepository {
 
     STATISTIC_2("""
             SELECT * FROM (
-            	SELECT 'Тип ' || f24 as title, count(*) FROM "spb-metro-check".orange
+            	SELECT 'Оп. ' || f24 as title, count(*) FROM "spb-metro-check".orange
             	WHERE date_fof between ${IN.date_start::VARCHAR}::date and ${IN.date_end::VARCHAR}::date
             	GROUP BY f24
             	UNION ALL
