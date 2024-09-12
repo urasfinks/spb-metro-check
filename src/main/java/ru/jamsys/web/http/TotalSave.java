@@ -110,10 +110,10 @@ public class TotalSave implements PromiseGenerator, HttpHandler {
                             ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
                             JdbcRequest jdbcRequest = new JdbcRequest(Total.INSERT);
                             HashMapBuilder<Object, Object> append = new HashMapBuilder<>()
-                                    .append("tpp", promise.getRepositoryMap("tpp", List.class))
-                                    .append("orange", promise.getRepositoryMap("orange", List.class))
-                                    .append("orange-statistic", promise.getRepositoryMap("orange-statistic", List.class))
-                                    .append("kkt", promise.getRepositoryMap("kkt", List.class));
+                                    .append("tpp", promise.getRepositoryMap(List.class, "tpp"))
+                                    .append("orange", promise.getRepositoryMap(List.class, "orange"))
+                                    .append("orange-statistic", promise.getRepositoryMap(List.class, "orange-statistic"))
+                                    .append("kkt", promise.getRepositoryMap(List.class, "kkt"));
 
                             String date = servletHandler.getRequestReader().getMap().getOrDefault("date_start", "-");
                             append.forEach((key, value) -> {

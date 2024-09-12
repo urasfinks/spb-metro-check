@@ -66,9 +66,9 @@ public class StatisticDb implements PromiseGenerator, HttpHandler {
                 .onComplete((_, p) -> {
                     ServletHandler servletHandler = p.getRepositoryMapClass(ServletHandler.class);
                     servletHandler.setResponseBodyFromMap(new HashMapBuilder<>()
-                            .append("tpp", p.getRepositoryMap("tpp", List.class))
-                            .append("orange", p.getRepositoryMap("orange", List.class))
-                            .append("orange-agg", p.getRepositoryMap("orange-agg", List.class)));
+                            .append("tpp", p.getRepositoryMap(List.class, "tpp"))
+                            .append("orange", p.getRepositoryMap(List.class, "orange"))
+                            .append("orange-agg", p.getRepositoryMap(List.class, "orange-agg")));
                     servletHandler.responseComplete();
                 })
                 .extension(SpbMetroCheckApplication::addErrorHandler);

@@ -66,10 +66,10 @@ public class CsvCorrection implements PromiseGenerator, HttpHandler {
                 .then("generateCsv", (_, promise) -> {
 
                     @SuppressWarnings("unchecked")
-                    List<Map<String, Object>> result = promise.getRepositoryMap("result", List.class);
+                    List<Map<String, Object>> result = promise.getRepositoryMap(List.class, "result");
 
                     @SuppressWarnings("unchecked")
-                    Map<String, String> station = promise.getRepositoryMap("station", Map.class);
+                    Map<String, String> station = promise.getRepositoryMap(Map.class, "station");
 
                     ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
 

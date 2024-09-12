@@ -50,7 +50,7 @@ public class StatisticKkt implements PromiseGenerator, HttpHandler {
                 .onComplete((_, p) -> {
                     ServletHandler ar = p.getRepositoryMapClass(ServletHandler.class);
                     ar.setResponseBodyFromMap(new HashMapBuilder<>()
-                            .append("kkt", p.getRepositoryMap("kkt", List.class))
+                            .append("kkt", p.getRepositoryMap(List.class, "kkt"))
                     );
                     ar.responseComplete();
                 })

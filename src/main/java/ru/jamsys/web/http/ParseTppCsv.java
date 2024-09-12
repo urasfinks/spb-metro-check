@@ -168,7 +168,7 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                 })
                 .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, promise, jdbcResource) -> {
                     @SuppressWarnings("unchecked")
-                    Map<String, String> station = promise.getRepositoryMap("station", Map.class);
+                    Map<String, String> station = promise.getRepositoryMap(Map.class, "station");
                     ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
                     Map<String, String> name = servletHandler.getRequestReader().getMultiPartFormSubmittedFileName();
                     if (name.get("file").endsWith(".zip")) {

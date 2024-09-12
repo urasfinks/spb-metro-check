@@ -57,7 +57,7 @@ public class CsvNotOrange implements PromiseGenerator, HttpHandler {
                 .then("generateCsv", (_, promise) -> {
 
                     @SuppressWarnings("unchecked")
-                    List<Map<String, Object>> result = promise.getRepositoryMap("result", List.class);
+                    List<Map<String, Object>> result = promise.getRepositoryMap(List.class, "result");
 
                     ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
 
