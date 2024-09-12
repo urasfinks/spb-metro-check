@@ -151,7 +151,7 @@ public class SpbMetroCheckApplication {
                 .append("complex_code_orange", "Станция+Турникет в Orange")
                 .append("complex_code_kkt", "Станция+Турникет в ККТ")
                 .append("count_agg_orange", "Сводное кол-во транзакций в Orange")
-                .append("summa_orange", "Сумма в Orange")
+                .append("summa_orange", "Сумма Orange")
                 .append("summa_agg_orange", "Сводная сумма в Orange")
                 .append("date_fof", "Дата системы отсчёта")
                 .append("date_add", "Дата добавления записи");
