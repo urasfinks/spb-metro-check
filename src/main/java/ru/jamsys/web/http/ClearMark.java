@@ -32,12 +32,12 @@ public class ClearMark implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 1_200_000L)
-                .then("check", (_, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
-                .thenWithResource("tppClearMark", JdbcResource.class, "default", (_, promise, jdbcResource)
+                .then("check", (_, _, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
+                .thenWithResource("tppClearMark", JdbcResource.class, "default", (_, _, promise, jdbcResource)
                         -> jdbcResource.execute(new JdbcRequest(TPP.CLEAR_MARK)
                         .addArg(promise.getRepositoryMapClass(ServletHandler.class).getRequestReader().getMap())
                 ))
-                .thenWithResource("orangeClearMark", JdbcResource.class, "default", (_, promise, jdbcResource)
+                .thenWithResource("orangeClearMark", JdbcResource.class, "default", (_, _, promise, jdbcResource)
                         -> jdbcResource.execute(new JdbcRequest(Orange.CLEAR_MARK)
                         .addArg(promise.getRepositoryMapClass(ServletHandler.class).getRequestReader().getMap())
                 ))

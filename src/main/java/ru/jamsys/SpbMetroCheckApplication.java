@@ -195,7 +195,7 @@ public class SpbMetroCheckApplication {
     }
 
     public static void addErrorHandler(Promise promiseSource) {
-        promiseSource.onError((_, promise) -> errorHandler(promise));
+        promiseSource.onError((_, _, promise) -> errorHandler(promise));
     }
 
     public static void errorHandler(Promise promise) {

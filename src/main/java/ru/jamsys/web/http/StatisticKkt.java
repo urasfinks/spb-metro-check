@@ -35,19 +35,19 @@ public class StatisticKkt implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 10_000L)
-                .then("check", (_, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
+                .then("check", (_, _, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
                 .thenWithResource(
                         "loadTppStatistic",
                         JdbcResource.class,
                         "default",
-                        (_, promise, jdbcResource) -> promise.setRepositoryMap("kkt", jdbcResource.execute(
+                        (_, _, promise, jdbcResource) -> promise.setRepositoryMap("kkt", jdbcResource.execute(
                                 new JdbcRequest(KKT.STATISTIC)
                                         .addArg(promise
                                                 .getRepositoryMapClass(ServletHandler.class)
                                                 .getRequestReader()
                                                 .getMap())
                         )))
-                .onComplete((_, p) -> {
+                .onComplete((_, _, p) -> {
                     ServletHandler ar = p.getRepositoryMapClass(ServletHandler.class);
                     ar.setResponseBodyFromMap(new HashMapBuilder<>()
                             .append("kkt", p.getRepositoryMap(List.class, "kkt"))

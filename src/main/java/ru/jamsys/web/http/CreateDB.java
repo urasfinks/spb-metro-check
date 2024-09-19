@@ -29,7 +29,7 @@ public class CreateDB implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 60_000L)
-                .thenWithResource("createDb", JdbcResource.class, "default", (_, _, jdbcResource) -> {
+                .thenWithResource("createDb", JdbcResource.class, "default", (_, _, _, jdbcResource) -> {
                     JdbcRequest jdbcRequest = new JdbcRequest(DB.CREATE);
                     jdbcResource.execute(jdbcRequest);
                 });

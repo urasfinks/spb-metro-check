@@ -156,8 +156,8 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 1_200_000L)
-                .then("check", (_, promise) -> SpbMetroCheckApplication.checkStartDate(promise))
-                .thenWithResource("selectStation", JdbcResource.class, "default", (_, promise, jdbcResource) -> {
+                .then("check", (_, _, promise) -> SpbMetroCheckApplication.checkStartDate(promise))
+                .thenWithResource("selectStation", JdbcResource.class, "default", (_, _, promise, jdbcResource) -> {
                     JdbcRequest jdbcRequest = new JdbcRequest(Station.SELECT);
                     List<Map<String, Object>> execute = jdbcResource.execute(jdbcRequest);
                     Map<String, String> station = new HashMap<>();
@@ -166,7 +166,7 @@ public class ParseTppCsv implements PromiseGenerator, HttpHandler {
                     promise.setRepositoryMap("station", station);
 
                 })
-                .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, promise, jdbcResource) -> {
+                .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, _, promise, jdbcResource) -> {
                     @SuppressWarnings("unchecked")
                     Map<String, String> station = promise.getRepositoryMap(Map.class, "station");
                     ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);

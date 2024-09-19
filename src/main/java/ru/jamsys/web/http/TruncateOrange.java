@@ -31,12 +31,12 @@ public class TruncateOrange implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 10_000L)
-                .then("check", (_, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
+                .then("check", (_, _, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
                 .thenWithResource(
                         "truncate",
                         JdbcResource.class,
                         "default",
-                        (_, promise, jdbcResource) -> jdbcResource.execute(
+                        (_, _, promise, jdbcResource) -> jdbcResource.execute(
                                 new JdbcRequest(Orange.DELETE)
                                         .addArg(promise
                                                 .getRepositoryMapClass(ServletHandler.class)

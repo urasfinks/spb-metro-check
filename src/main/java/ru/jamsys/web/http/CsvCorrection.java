@@ -44,8 +44,8 @@ public class CsvCorrection implements PromiseGenerator, HttpHandler {
     public Promise generate() {
 
         return servicePromise.get(index, 60_000L)
-                .then("check", (_, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
-                .thenWithResource("selectStation", JdbcResource.class, "default", (_, promise, jdbcResource) -> {
+                .then("check", (_, _, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
+                .thenWithResource("selectStation", JdbcResource.class, "default", (_, _, promise, jdbcResource) -> {
                     List<Map<String, Object>> execute = jdbcResource.execute(new JdbcRequest(Station.SELECT));
                     Map<String, String> station = new HashMap<>();
                     execute.forEach(stringObjectMap
@@ -56,14 +56,14 @@ public class CsvCorrection implements PromiseGenerator, HttpHandler {
                         "loadFromDb",
                         JdbcResource.class,
                         "default",
-                        (_, promise, jdbcResource) -> promise.setRepositoryMap("result", jdbcResource.execute(
+                        (_, _, promise, jdbcResource) -> promise.setRepositoryMap("result", jdbcResource.execute(
                                 new JdbcRequest(TPP.PROCESSED)
                                         .addArg(promise
                                                 .getRepositoryMapClass(ServletHandler.class)
                                                 .getRequestReader()
                                                 .getMap())
                                         .addArg("processed", List.of("fn_future", "not_orange")))))
-                .then("generateCsv", (_, promise) -> {
+                .then("generateCsv", (_, _, promise) -> {
 
                     @SuppressWarnings("unchecked")
                     List<Map<String, Object>> result = promise.getRepositoryMap(List.class, "result");
@@ -98,7 +98,7 @@ public class CsvCorrection implements PromiseGenerator, HttpHandler {
                     csvWriter.flush();
                     csvWriter.close();
                 })
-                .onComplete((_, promise) -> promise.getRepositoryMapClass(ServletHandler.class).getCompletableFuture().complete(null));
+                .onComplete((_, _, promise) -> promise.getRepositoryMapClass(ServletHandler.class).getCompletableFuture().complete(null));
     }
 
     public String getUniqueFileName(String direction) {

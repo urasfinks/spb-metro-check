@@ -39,7 +39,7 @@ public class TotalSave implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 10_000L)
-                .then("check", (_, promise) -> {
+                .then("check", (_, _, promise) -> {
                     SpbMetroCheckApplication.checkStartDate(promise);
                     /*
                      * Сохранение сводной работает только по одной дате, но SQL статистики написаны на between
@@ -53,7 +53,7 @@ public class TotalSave implements PromiseGenerator, HttpHandler {
                         "loadTppStatistic",
                         JdbcResource.class,
                         "default",
-                        (_, promise, jdbcResource) -> promise.setRepositoryMap("tpp", jdbcResource.execute(
+                        (_, _, promise, jdbcResource) -> promise.setRepositoryMap("tpp", jdbcResource.execute(
                                         new JdbcRequest(TPP.STATISTIC).addArg(promise
                                                 .getRepositoryMapClass(ServletHandler.class)
                                                 .getRequestReader()
@@ -66,7 +66,7 @@ public class TotalSave implements PromiseGenerator, HttpHandler {
                         "loadOrangeStatistic",
                         JdbcResource.class,
                         "default",
-                        (_, promise, jdbcResource) -> promise.setRepositoryMap(
+                        (_, _, promise, jdbcResource) -> promise.setRepositoryMap(
                                 "orange",
                                 jdbcResource.execute(new JdbcRequest(Orange.STATISTIC).addArg(promise
                                                 .getRepositoryMapClass(ServletHandler.class)
@@ -80,7 +80,7 @@ public class TotalSave implements PromiseGenerator, HttpHandler {
                         "loadOrangeStatistic",
                         JdbcResource.class,
                         "default",
-                        (_, promise, jdbcResource) -> promise.setRepositoryMap("orange-statistic", jdbcResource.execute(
+                        (_, _, promise, jdbcResource) -> promise.setRepositoryMap("orange-statistic", jdbcResource.execute(
                                         new JdbcRequest(Orange.STATISTIC_2).addArg(promise
                                                 .getRepositoryMapClass(ServletHandler.class)
                                                 .getRequestReader()
@@ -93,7 +93,7 @@ public class TotalSave implements PromiseGenerator, HttpHandler {
                         "loadTppStatistic",
                         JdbcResource.class,
                         "default",
-                        (_, promise, jdbcResource) -> promise.setRepositoryMap("kkt", jdbcResource.execute(
+                        (_, _, promise, jdbcResource) -> promise.setRepositoryMap("kkt", jdbcResource.execute(
                                         new JdbcRequest(KKT.STATISTIC).addArg(promise
                                                 .getRepositoryMapClass(ServletHandler.class)
                                                 .getRequestReader()
@@ -106,7 +106,7 @@ public class TotalSave implements PromiseGenerator, HttpHandler {
                         "loadTppStatistic",
                         JdbcResource.class,
                         "default",
-                        (_, promise, jdbcResource) -> {
+                        (_, _, promise, jdbcResource) -> {
                             ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
                             JdbcRequest jdbcRequest = new JdbcRequest(Total.INSERT);
                             HashMapBuilder<Object, Object> append = new HashMapBuilder<>()

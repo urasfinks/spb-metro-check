@@ -29,7 +29,7 @@ public class Main implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 7_000L)
-                .append("input", (atomicBoolean, promise) -> {
+                .append("input", (atomicBoolean, _, promise) -> {
                     ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
                     servletHandler.setResponseBody(UtilFile.getWebContent("upload.html"));
                     servletHandler.setResponseContentType("text/html");

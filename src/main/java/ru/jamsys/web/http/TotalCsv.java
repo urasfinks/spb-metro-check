@@ -42,8 +42,8 @@ public class TotalCsv implements PromiseGenerator, HttpHandler {
     public Promise generate() {
 
         return servicePromise.get(index, 60_000L)
-                .then("check", (_, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
-                .thenWithResource("loadFromDb", JdbcResource.class, "default", (_, promise, jdbcResource) -> {
+                .then("check", (_, _, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
+                .thenWithResource("loadFromDb", JdbcResource.class, "default", (_, _, promise, jdbcResource) -> {
                     JdbcRequest jdbcRequest = new JdbcRequest(Total.TOTAL)
                             .addArg(promise
                                     .getRepositoryMapClass(ServletHandler.class)
@@ -51,7 +51,7 @@ public class TotalCsv implements PromiseGenerator, HttpHandler {
                                     .getMap());
                     promise.setRepositoryMap("result", jdbcResource.execute(jdbcRequest));
                 })
-                .then("generateCsv", (_, promise) -> {
+                .then("generateCsv", (_, _, promise) -> {
 
                     @SuppressWarnings("unchecked")
                     List<Map<String, Object>> result = promise.getRepositoryMap(List.class, "result");
@@ -79,7 +79,7 @@ public class TotalCsv implements PromiseGenerator, HttpHandler {
                     csvWriter.flush();
                     csvWriter.close();
                 })
-                .onComplete((_, promise) -> promise.getRepositoryMapClass(ServletHandler.class).getCompletableFuture().complete(null))
+                .onComplete((_, _, promise) -> promise.getRepositoryMapClass(ServletHandler.class).getCompletableFuture().complete(null))
                 .extension(SpbMetroCheckApplication::addErrorHandler);
     }
 

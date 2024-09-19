@@ -41,19 +41,19 @@ public class CsvAccepted implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 60_000L)
-                .then("check", (_, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
+                .then("check", (_, _, promise) -> SpbMetroCheckApplication.checkDateRangeRequest(promise))
                 .thenWithResource(
                         "loadFromDb",
                         JdbcResource.class,
                         "default",
-                        (_, promise, jdbcResource) -> promise.setRepositoryMap("result", jdbcResource.execute(
+                        (_, _, promise, jdbcResource) -> promise.setRepositoryMap("result", jdbcResource.execute(
                                 new JdbcRequest(TPP.PROCESSED)
                                         .addArg(promise
                                                 .getRepositoryMapClass(ServletHandler.class)
                                                 .getRequestReader()
                                                 .getMap())
                                         .addArg("processed", List.of("accepted_tpp")))))
-                .then("generateCsv", (_, promise) -> {
+                .then("generateCsv", (_, _, promise) -> {
                     @SuppressWarnings("unchecked")
                     List<Map<String, Object>> result = promise.getRepositoryMap(List.class, "result");
 
@@ -81,7 +81,7 @@ public class CsvAccepted implements PromiseGenerator, HttpHandler {
                     csvWriter.flush();
                     csvWriter.close();
                 })
-                .onComplete((_, promise) -> promise.getRepositoryMapClass(ServletHandler.class).getCompletableFuture().complete(null));
+                .onComplete((_, _, promise) -> promise.getRepositoryMapClass(ServletHandler.class).getCompletableFuture().complete(null));
     }
 
     public String getUniqueFileName(String direction) {

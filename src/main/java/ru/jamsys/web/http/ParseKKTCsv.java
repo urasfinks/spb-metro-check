@@ -52,7 +52,7 @@ public class ParseKKTCsv implements PromiseGenerator, HttpHandler {
     @Override
     public Promise generate() {
         return servicePromise.get(index, 1_200_000L)
-                .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, promise, jdbcResource) -> {
+                .thenWithResource("loadToDb", JdbcResource.class, "default", (isThreadRun, _, promise, jdbcResource) -> {
                     ServletHandler servletHandler = promise.getRepositoryMapClass(ServletHandler.class);
                     SpbMetroCheckApplication.onRead(
                             SpbMetroCheckApplication.getCSVReader(servletHandler.getRequestReader().getMultiPartFormData("file"), 3, "Cp1251"),
