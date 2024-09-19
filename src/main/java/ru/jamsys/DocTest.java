@@ -60,7 +60,7 @@ public class DocTest {
                 "master_dt.docx",
                 "xe.docx",
                 UtilFileResource.getAsString("master_dt_row.txt"),
-                new HashMapBuilder<String, String>()k
+                new HashMapBuilder<String, String>()
                         .append("visa_bank_name", "Виза банк")
                         .append("visa_inn", "12345"),
                 tableData
