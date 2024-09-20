@@ -1,0 +1,161 @@
+<w:tr w:rsidR="002177FD" w:rsidRPr="00710F2F" w14:paraId="498343C2" w14:textId="77777777" w:rsidTr="00293CB7">
+							<w:trPr>
+								<w:trHeight w:val="290"/>
+							</w:trPr>
+							<w:tc>
+								<w:tcPr>
+									<w:tcW w:w="1808" w:type="dxa"/>
+									<w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+									<w:noWrap/>
+									<w:vAlign w:val="bottom"/>
+									<w:hideMark/>
+								</w:tcPr>
+								<w:p w14:paraId="57A0514E" w14:textId="00D75A3B" w:rsidR="00C42B23" w:rsidRPr="00293CB7" w:rsidRDefault="002177FD" w:rsidP="00293CB7">
+									<w:pPr>
+										<w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
+										<w:rPr>
+											<w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>
+											<w:color w:val="000000"/>
+											<w:szCs w:val="16"/>
+											<w:lang w:val="en-US" w:eastAsia="ru-RU"/>
+										</w:rPr>
+									</w:pPr>
+									<w:r w:rsidRPr="002177FD">
+										<w:rPr>
+											<w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/>
+										</w:rPr>
+										<w:t>${a8}</w:t>
+									</w:r>
+								</w:p>
+							</w:tc>
+							<w:tc>
+								<w:tcPr>
+									<w:tcW w:w="1390" w:type="dxa"/>
+									<w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+									<w:noWrap/>
+									<w:vAlign w:val="bottom"/>
+									<w:hideMark/>
+								</w:tcPr>
+								<w:p w14:paraId="3C5C03EA" w14:textId="60AD399C" w:rsidR="00C42B23" w:rsidRPr="00293CB7" w:rsidRDefault="002177FD" w:rsidP="00293CB7">
+									<w:pPr>
+										<w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
+										<w:rPr>
+											<w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>
+											<w:color w:val="000000"/>
+											<w:szCs w:val="16"/>
+											<w:lang w:val="en-US" w:eastAsia="ru-RU"/>
+										</w:rPr>
+									</w:pPr>
+									<w:r w:rsidRPr="002177FD">
+										<w:rPr>
+											<w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/>
+										</w:rPr>
+										<w:t>${a9}</w:t>
+									</w:r>
+								</w:p>
+							</w:tc>
+							<w:tc>
+								<w:tcPr>
+									<w:tcW w:w="2277" w:type="dxa"/>
+									<w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+									<w:noWrap/>
+									<w:vAlign w:val="bottom"/>
+									<w:hideMark/>
+								</w:tcPr>
+								<w:p w14:paraId="310EF509" w14:textId="70880E01" w:rsidR="00C42B23" w:rsidRPr="00293CB7" w:rsidRDefault="002177FD" w:rsidP="00293CB7">
+									<w:pPr>
+										<w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
+										<w:rPr>
+											<w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>
+											<w:color w:val="000000"/>
+											<w:szCs w:val="16"/>
+											<w:lang w:val="en-US" w:eastAsia="ru-RU"/>
+										</w:rPr>
+									</w:pPr>
+									<w:r w:rsidRPr="002177FD">
+										<w:rPr>
+											<w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/>
+										</w:rPr>
+										<w:t>${a10}</w:t>
+									</w:r>
+								</w:p>
+							</w:tc>
+							<w:tc>
+								<w:tcPr>
+									<w:tcW w:w="2131" w:type="dxa"/>
+									<w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+									<w:noWrap/>
+									<w:vAlign w:val="bottom"/>
+									<w:hideMark/>
+								</w:tcPr>
+								<w:p w14:paraId="25DB299F" w14:textId="2E8E3D17" w:rsidR="00C42B23" w:rsidRPr="00293CB7" w:rsidRDefault="002177FD" w:rsidP="00293CB7">
+									<w:pPr>
+										<w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
+										<w:rPr>
+											<w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>
+											<w:color w:val="000000"/>
+											<w:szCs w:val="16"/>
+											<w:lang w:val="en-US" w:eastAsia="ru-RU"/>
+										</w:rPr>
+									</w:pPr>
+									<w:r w:rsidRPr="002177FD">
+										<w:rPr>
+											<w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/>
+										</w:rPr>
+										<w:t>${a11}</w:t>
+									</w:r>
+								</w:p>
+							</w:tc>
+							<w:tc>
+								<w:tcPr>
+									<w:tcW w:w="1358" w:type="dxa"/>
+									<w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+									<w:noWrap/>
+									<w:vAlign w:val="bottom"/>
+									<w:hideMark/>
+								</w:tcPr>
+								<w:p w14:paraId="63D879F3" w14:textId="21CA7798" w:rsidR="00C42B23" w:rsidRPr="00293CB7" w:rsidRDefault="002177FD" w:rsidP="00C42B23">
+									<w:pPr>
+										<w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
+										<w:rPr>
+											<w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>
+											<w:color w:val="000000"/>
+											<w:szCs w:val="16"/>
+											<w:lang w:val="en-US" w:eastAsia="ru-RU"/>
+										</w:rPr>
+									</w:pPr>
+									<w:r w:rsidRPr="002177FD">
+										<w:rPr>
+											<w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/>
+										</w:rPr>
+										<w:t>${a12}</w:t>
+									</w:r>
+								</w:p>
+							</w:tc>
+							<w:tc>
+								<w:tcPr>
+									<w:tcW w:w="1300" w:type="dxa"/>
+									<w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+									<w:noWrap/>
+									<w:vAlign w:val="bottom"/>
+									<w:hideMark/>
+								</w:tcPr>
+								<w:p w14:paraId="02CB3A2B" w14:textId="6F5ACCB2" w:rsidR="00C42B23" w:rsidRPr="00293CB7" w:rsidRDefault="002177FD" w:rsidP="00293CB7">
+									<w:pPr>
+										<w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
+										<w:rPr>
+											<w:rFonts w:ascii="Times New Roman" w:eastAsia="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>
+											<w:color w:val="000000"/>
+											<w:szCs w:val="16"/>
+											<w:lang w:val="en-US" w:eastAsia="ru-RU"/>
+										</w:rPr>
+									</w:pPr>
+									<w:r w:rsidRPr="002177FD">
+										<w:rPr>
+											<w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/>
+										</w:rPr>
+										<w:t>${a13}</w:t>
+									</w:r>
+								</w:p>
+							</w:tc>
+						</w:tr>

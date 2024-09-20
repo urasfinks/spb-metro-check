@@ -291,6 +291,7 @@ public class MasterVisa {
                     .append("a11", "visa_merchant_id")
                     .append("a12", "visa_mvv")
                     .append("a13", "visa_arn")
+                    .append("any_tr", "any_tr")
             )
             .append("master.docx", new HashMapBuilder<String, String>()
                     .append("a1", "mc_bank_name")
