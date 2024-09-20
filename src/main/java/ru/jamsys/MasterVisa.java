@@ -1,8 +1,6 @@
 package ru.jamsys;
 
-import org.docx4j.model.datastorage.migration.VariablePrepare;
-import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
+
 import ru.jamsys.core.extension.builder.HashMapBuilder;
 import ru.jamsys.core.flat.template.twix.TemplateTwix;
 import ru.jamsys.core.flat.util.FileWriteOptions;
@@ -10,7 +8,10 @@ import ru.jamsys.core.flat.util.UtilFile;
 import ru.jamsys.core.flat.util.UtilFileResource;
 import ru.jamsys.core.flat.util.UtilRisc;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -335,15 +336,4 @@ public class MasterVisa {
         return copy;
     }
 
-    public static byte[] generateDocxFileFromTemplate(String fileTemplate, Map<String, String> input) throws Exception {
-        WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(UtilFileResource.get(fileTemplate));
-        MainDocumentPart documentPart = wordMLPackage.getMainDocumentPart();
-        VariablePrepare.prepare(wordMLPackage);
-        Map<String, String> mapTemplate = getMapTemplate(fileTemplate, input);
-        //documentPart.
-        documentPart.variableReplace(mapTemplate);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        wordMLPackage.save(outputStream);
-        return outputStream.toByteArray();
-    }
 }

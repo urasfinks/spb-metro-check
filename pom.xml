@@ -55,18 +55,6 @@
             <version>5.9</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-JAXB-ReferenceImpl -->
-        <dependency>
-            <groupId>org.docx4j</groupId>
-            <artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
-            <version>11.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.plutext</groupId>
-            <artifactId>jaxb-xmldsig-core</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
     </dependencies>
 
     <build>
