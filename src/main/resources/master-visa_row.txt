@@ -1,0 +1,192 @@
+<w:tr w:rsidR="008C34EA" w:rsidRPr="00FC1820" w14:paraId="409F9434" w14:textId="77777777"
+                              w:rsidTr="00657F27">
+                            <w:trPr>
+                                <w:trHeight w:val="290"/>
+                            </w:trPr>
+                            <w:tc>
+                                <w:tcPr>
+                                    <w:tcW w:w="1958" w:type="dxa"/>
+                                    <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+                                    <w:noWrap/>
+                                    <w:vAlign w:val="bottom"/>
+                                    <w:hideMark/>
+                                </w:tcPr>
+                                <w:p w14:paraId="3610B3F7" w14:textId="4ADA5DFC" w:rsidR="00FC1820" w:rsidRPr="00657F27"
+                                     w:rsidRDefault="008C34EA" w:rsidP="00FC1820">
+                                    <w:pPr>
+                                        <w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="Calibri" w:eastAsia="Times New Roman" w:hAnsi="Calibri"
+                                                      w:cs="Calibri"/>
+                                            <w:color w:val="000000"/>
+                                            <w:highlight w:val="yellow"/>
+                                            <w:lang w:val="en-US" w:eastAsia="ru-RU"/>
+                                        </w:rPr>
+                                    </w:pPr>
+                                    <w:r w:rsidRPr="008C34EA">
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="Calibri" w:eastAsia="Times New Roman" w:hAnsi="Calibri"
+                                                      w:cs="Calibri"/>
+                                            <w:color w:val="000000"/>
+                                            <w:lang w:val="en-US" w:eastAsia="ru-RU"/>
+                                        </w:rPr>
+                                        <w:t>${a9}</w:t>
+                                    </w:r>
+                                </w:p>
+                            </w:tc>
+                            <w:tc>
+                                <w:tcPr>
+                                    <w:tcW w:w="1266" w:type="dxa"/>
+                                    <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+                                    <w:noWrap/>
+                                    <w:vAlign w:val="bottom"/>
+                                    <w:hideMark/>
+                                </w:tcPr>
+                                <w:p w14:paraId="39D4D955" w14:textId="027E63B9" w:rsidR="00FC1820" w:rsidRPr="00657F27"
+                                     w:rsidRDefault="008C34EA" w:rsidP="008F5572">
+                                    <w:pPr>
+                                        <w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="Calibri" w:eastAsia="Times New Roman" w:hAnsi="Calibri"
+                                                      w:cs="Calibri"/>
+                                            <w:color w:val="000000"/>
+                                            <w:highlight w:val="yellow"/>
+                                            <w:lang w:eastAsia="ru-RU"/>
+                                        </w:rPr>
+                                    </w:pPr>
+                                    <w:r w:rsidRPr="008C34EA">
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="Calibri" w:eastAsia="Times New Roman" w:hAnsi="Calibri"
+                                                      w:cs="Calibri"/>
+                                            <w:color w:val="000000"/>
+                                            <w:lang w:val="en-US" w:eastAsia="ru-RU"/>
+                                        </w:rPr>
+                                        <w:t>${a10}</w:t>
+                                    </w:r>
+                                </w:p>
+                            </w:tc>
+                            <w:tc>
+                                <w:tcPr>
+                                    <w:tcW w:w="1476" w:type="dxa"/>
+                                    <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+                                    <w:noWrap/>
+                                    <w:vAlign w:val="bottom"/>
+                                    <w:hideMark/>
+                                </w:tcPr>
+                                <w:p w14:paraId="35A25A1C" w14:textId="7B308B41" w:rsidR="00FC1820" w:rsidRPr="00657F27"
+                                     w:rsidRDefault="008C34EA" w:rsidP="008F5572">
+                                    <w:pPr>
+                                        <w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="Calibri" w:eastAsia="Times New Roman" w:hAnsi="Calibri"
+                                                      w:cs="Calibri"/>
+                                            <w:color w:val="000000"/>
+                                            <w:highlight w:val="yellow"/>
+                                            <w:lang w:eastAsia="ru-RU"/>
+                                        </w:rPr>
+                                    </w:pPr>
+                                    <w:r w:rsidRPr="008C34EA">
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="Calibri" w:eastAsia="Times New Roman" w:hAnsi="Calibri"
+                                                      w:cs="Calibri"/>
+                                            <w:color w:val="000000"/>
+                                            <w:lang w:val="en-US" w:eastAsia="ru-RU"/>
+                                        </w:rPr>
+                                        <w:t>${a11}</w:t>
+                                    </w:r>
+                                </w:p>
+                            </w:tc>
+                            <w:tc>
+                                <w:tcPr>
+                                    <w:tcW w:w="1996" w:type="dxa"/>
+                                    <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+                                    <w:noWrap/>
+                                    <w:vAlign w:val="bottom"/>
+                                    <w:hideMark/>
+                                </w:tcPr>
+                                <w:p w14:paraId="3067C1E9" w14:textId="6BA301DD" w:rsidR="00FC1820" w:rsidRPr="00657F27"
+                                     w:rsidRDefault="008C34EA" w:rsidP="008F5572">
+                                    <w:pPr>
+                                        <w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="Calibri" w:eastAsia="Times New Roman" w:hAnsi="Calibri"
+                                                      w:cs="Calibri"/>
+                                            <w:color w:val="000000"/>
+                                            <w:highlight w:val="yellow"/>
+                                            <w:lang w:eastAsia="ru-RU"/>
+                                        </w:rPr>
+                                    </w:pPr>
+                                    <w:r w:rsidRPr="008C34EA">
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="Calibri" w:eastAsia="Times New Roman" w:hAnsi="Calibri"
+                                                      w:cs="Calibri"/>
+                                            <w:color w:val="000000"/>
+                                            <w:lang w:val="en-US" w:eastAsia="ru-RU"/>
+                                        </w:rPr>
+                                        <w:t>${a12}</w:t>
+                                    </w:r>
+                                </w:p>
+                            </w:tc>
+                            <w:tc>
+                                <w:tcPr>
+                                    <w:tcW w:w="1134" w:type="dxa"/>
+                                    <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+                                    <w:noWrap/>
+                                    <w:vAlign w:val="bottom"/>
+                                    <w:hideMark/>
+                                </w:tcPr>
+                                <w:p w14:paraId="1786C40A" w14:textId="6C0E1C80" w:rsidR="00FC1820" w:rsidRPr="00657F27"
+                                     w:rsidRDefault="008C34EA" w:rsidP="008F5572">
+                                    <w:pPr>
+                                        <w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="Calibri" w:eastAsia="Times New Roman" w:hAnsi="Calibri"
+                                                      w:cs="Calibri"/>
+                                            <w:color w:val="000000"/>
+                                            <w:highlight w:val="yellow"/>
+                                            <w:lang w:eastAsia="ru-RU"/>
+                                        </w:rPr>
+                                    </w:pPr>
+                                    <w:r w:rsidRPr="008C34EA">
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="Calibri" w:eastAsia="Times New Roman" w:hAnsi="Calibri"
+                                                      w:cs="Calibri"/>
+                                            <w:color w:val="000000"/>
+                                            <w:lang w:val="en-US" w:eastAsia="ru-RU"/>
+                                        </w:rPr>
+                                        <w:t>${a13}</w:t>
+                                    </w:r>
+                                </w:p>
+                            </w:tc>
+                            <w:tc>
+                                <w:tcPr>
+                                    <w:tcW w:w="2434" w:type="dxa"/>
+                                    <w:shd w:val="clear" w:color="auto" w:fill="auto"/>
+                                    <w:noWrap/>
+                                    <w:vAlign w:val="bottom"/>
+                                    <w:hideMark/>
+                                </w:tcPr>
+                                <w:p w14:paraId="281B768C" w14:textId="7DB50958" w:rsidR="00FC1820" w:rsidRPr="00657F27"
+                                     w:rsidRDefault="008C34EA" w:rsidP="00FC1820">
+                                    <w:pPr>
+                                        <w:spacing w:after="0" w:line="240" w:lineRule="auto"/>
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="Calibri" w:eastAsia="Times New Roman" w:hAnsi="Calibri"
+                                                      w:cs="Calibri"/>
+                                            <w:color w:val="000000"/>
+                                            <w:highlight w:val="yellow"/>
+                                            <w:lang w:val="en-US" w:eastAsia="ru-RU"/>
+                                        </w:rPr>
+                                    </w:pPr>
+                                    <w:r w:rsidRPr="008C34EA">
+                                        <w:rPr>
+                                            <w:rFonts w:ascii="Calibri" w:eastAsia="Times New Roman" w:hAnsi="Calibri"
+                                                      w:cs="Calibri"/>
+                                            <w:color w:val="000000"/>
+                                            <w:lang w:val="en-US" w:eastAsia="ru-RU"/>
+                                        </w:rPr>
+                                        <w:t>${a14}</w:t>
+                                    </w:r>
+                                </w:p>
+                            </w:tc>
+                        </w:tr>
