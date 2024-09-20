@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 /*
-* data_mcc l1
+* data_mvv l1
 {
   "f0" : "dpan",
   "f1" : "acceptor_name",

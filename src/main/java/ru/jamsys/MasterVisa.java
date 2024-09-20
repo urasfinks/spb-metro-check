@@ -107,7 +107,7 @@ public class MasterVisa {
             ArrayList<Map<String, String>> tableData = new ArrayList<>();
             compile(
                     "master-visa.docx",
-                    "data/ex/f" + l1.get("f0") + "-empty.docx",
+                    "data/master-visa/f" + l1.get("f0") + "-empty.docx",
                     UtilFileResource.getAsString("master-visa_row.txt"),
                     new HashMapBuilder<>(append).append("list2_ps", ""),
                     tableData
@@ -128,7 +128,7 @@ public class MasterVisa {
             });
             compile(
                     "master-visa.docx",
-                    "data/ex/f" + l1.get("f0") + "-visa.docx",
+                    "data/master-visa/f" + l1.get("f0") + "-visa.docx",
                     UtilFileResource.getAsString("master-visa_row.txt"),
                     new HashMapBuilder<>(append).append("list2_ps", "Виза"),
                     tableData
@@ -162,7 +162,7 @@ public class MasterVisa {
     private static List<Map<String, Object>> getMccL1() throws Throwable {
         List<Map<String, Object>> result = new ArrayList<>();
         SpbMetroCheckApplication.onRead(
-                SpbMetroCheckApplication.getCSVReader(new FileInputStream("data/visa-master/data_mcc_l1.csv"), 1, "Cp1251"),
+                SpbMetroCheckApplication.getCSVReader(new FileInputStream("data/input/data_mcc_l1.csv"), 1, "Cp1251"),
                 new AtomicBoolean(true),
                 1,
                 result::addAll
@@ -176,7 +176,7 @@ public class MasterVisa {
     private static List<Map<String, Object>> getMccL2() throws Throwable {
         List<Map<String, Object>> result = new ArrayList<>();
         SpbMetroCheckApplication.onRead(
-                SpbMetroCheckApplication.getCSVReader(new FileInputStream("data/visa-master/data_mcc_l2.csv"), 1, "Cp1251"),
+                SpbMetroCheckApplication.getCSVReader(new FileInputStream("data/input/data_mcc_l2.csv"), 1, "Cp1251"),
                 new AtomicBoolean(true),
                 1,
                 result::addAll
@@ -297,7 +297,7 @@ public class MasterVisa {
                     .append("a1", "mc_bank_name")
                     .append("a2", "mc_legal")
                     .append("a3", "mc_bank_name")
-                    .append("a4", "mc_mvv")
+                    .append("a4", "mc_legal")
                     .append("a5", "mc_inn")
                     .append("a6", "mc_trans_date")
                     .append("a7", "mc_dpan")

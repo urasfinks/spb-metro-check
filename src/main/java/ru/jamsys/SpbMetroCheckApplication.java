@@ -72,7 +72,7 @@ public class SpbMetroCheckApplication {
                 batch = new ArrayList<>();
                 curSizeBatch = 0;
             }
-            break;
+            //break;
         }
         if (!batch.isEmpty()) {
             onRead.accept(batch);
