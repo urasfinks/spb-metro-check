@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import ru.jamsys.core.App;
 import ru.jamsys.core.component.SecurityComponent;
-import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.extension.http.ServletRequestReader;
-import ru.jamsys.core.web.http.HttpInterceptor;
+import ru.jamsys.core.extension.http.ServletResponseWriter;
+import ru.jamsys.core.handler.web.http.HttpInterceptor;
 
 @Component
 @Lazy
@@ -31,7 +31,7 @@ public class Auth implements HttpInterceptor {
             });
         } catch (Throwable th) {
             App.error(th);
-            ServletHandler.setResponseUnauthorized(response);
+            ServletResponseWriter.setResponseUnauthorized(response);
             return false;
         }
         return true;

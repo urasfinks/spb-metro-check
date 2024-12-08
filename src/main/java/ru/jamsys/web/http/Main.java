@@ -9,7 +9,7 @@ import ru.jamsys.core.extension.http.ServletHandler;
 import ru.jamsys.core.flat.util.UtilFile;
 import ru.jamsys.core.promise.Promise;
 import ru.jamsys.core.promise.PromiseGenerator;
-import ru.jamsys.core.web.http.HttpHandler;
+import ru.jamsys.core.handler.web.http.HttpHandler;
 
 @Component
 @SuppressWarnings("unused")
